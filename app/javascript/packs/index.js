@@ -167,9 +167,12 @@ const render = ({ characters }) => {
   layer.draw();
 }
 
+$('.footer').hide();
+
 $.ajax({
   url: '/characters.json'
 })
 .done((data) => {
   render(data);
+  $('.footer').show();
 });
