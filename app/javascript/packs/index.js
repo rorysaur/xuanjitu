@@ -170,6 +170,16 @@ const characterTextMouseover = (characterText) => {
 
 characterTexts.forEach((characterText) => {
   layer.add(characterText);
+
+  // fade in text
+  characterText.opacity(0);
+  let fadeIn = new Konva.Tween({
+    node: characterText,
+    duration: 0.5 + (Math.random() * 5),
+    opacity: 1
+  });
+  fadeIn.play();
+
   characterText.on('mouseover', characterTextMouseover.bind(this, characterText));
 });
 
