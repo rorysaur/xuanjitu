@@ -133,8 +133,8 @@ const updateTrace = (characterText) => {
       getCenterX(characterText),
       getCenterY(characterText)
     ],
-    fill: 'black',
-    stroke: 'black',
+    fill: '#999',
+    stroke: '#999',
     strokeWidth: 1
   });
   layer.add(newLine);
