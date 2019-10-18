@@ -3811,6 +3811,11 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
   integrity sha512-s5kLOcnH0XqDO+FvuaLX8DDjZ18CGFk7VygH40QoKPUQhW4e2rvM0rwUq0t8IQDOwYSeLK01U90OjzBTme2QqA==
 
+konva@^4.0.15:
+  version "4.0.15"
+  resolved "https://registry.yarnpkg.com/konva/-/konva-4.0.15.tgz#330fb52f09294ab18d7dc35f5583887d0b23974e"
+  integrity sha512-pmyiF1grubiKqHSS+ILVA6hFBHj+wK3jsRwF9vVxVJ79gwF//qgXHZMdtbkMjSDr5N0um3HFuMW+lCwwImgbQw==
+
 last-call-webpack-plugin@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/last-call-webpack-plugin/-/last-call-webpack-plugin-3.0.0.tgz#9742df0e10e3cf46e5c0381c2de90d3a7a2d7555"
