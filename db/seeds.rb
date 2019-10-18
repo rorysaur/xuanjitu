@@ -1,9 +1,32 @@
+require "csv"
+
 # seed positions if table is empty
 if !Position.any?
+  # prepare color values
+  csv_path = File.join(Rails.root, "db", "data", "colors.csv")
+  CSV::Converters[:symbol] = -> (value) { value.to_sym }
+  colors = CSV.parse(File.read(csv_path), headers: true, converters: :symbol)
+  color_mappings = {
+    a: "black",
+    u: "blue",
+    g: "green",
+    p: "purple",
+    r: "red",
+    y: "yellow",
+  }
+
   ActiveRecord::Base.transaction do
     (0..28).each do |y|
       (0..28).each do |x|
-        Position.create!(x_coordinate: x, y_coordinate: y)
+        color_key = colors[y][x]
+        color = color_mappings[color_key]
+        raise "color for #{color_key} not found at (#{x},#{y})!" if color.nil?
+
+        Position.create!(
+          x_coordinate: x,
+          y_coordinate: y,
+          color: color,
+        )
       end
     end
   end

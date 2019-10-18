@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_18_190546) do
+ActiveRecord::Schema.define(version: 2019_10_18_212530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,8 @@ ActiveRecord::Schema.define(version: 2019_10_18_190546) do
     t.integer "y_coordinate", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "color"
+    t.index ["color"], name: "index_positions_on_color"
     t.index ["x_coordinate", "y_coordinate"], name: "index_positions_on_x_coordinate_and_y_coordinate"
   end
 
