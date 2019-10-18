@@ -74,10 +74,11 @@ let layer = new Konva.Layer();
 
 let characterTexts = characters.map((character) => {
   const newText = new Konva.Text({
-    x: character.x * 20,
-    y: character.y * 20,
+    x: character.x * 25,
+    y: character.y * 25,
     text: character.text,
-    fontSize: 16,
+    fontFamily: 'Ma Shan Zheng',
+    fontSize: 20,
     fill: character.color
   });
 
@@ -92,8 +93,8 @@ let gridBackground = new Konva.Rect({
   y: 0,
   strokeWidth: 5,
   fill: '#eee',
-  width: 600,
-  height: 600,
+  width: 750,
+  height: 750,
 });
 layer.add(gridBackground);
 
@@ -101,7 +102,8 @@ let focusText = new Konva.Text({
   x: gridBackground.width() + 20,
   y: 0,
   text: '',
-  fontSize: 72,
+  fontFamily: 'Ma Shan Zheng',
+  fontSize: 96,
   fill: 'black',
 });
 layer.add(focusText);
