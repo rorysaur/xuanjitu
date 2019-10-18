@@ -84,6 +84,9 @@ let characterTexts = characters.map((character) => {
   return newText;
 });
 
+let characterWidth = characterTexts[0].width();
+let characterHeight = characterTexts[0].height();
+
 let gridBackground = new Konva.Rect({
   x: 0,
   y: 0,
@@ -92,6 +95,7 @@ let gridBackground = new Konva.Rect({
   width: 600,
   height: 600,
 });
+layer.add(gridBackground);
 
 let focusText = new Konva.Text({
   x: gridBackground.width() + 20,
@@ -100,21 +104,72 @@ let focusText = new Konva.Text({
   fontSize: 72,
   fill: 'black',
 });
-
-layer.add(gridBackground);
 layer.add(focusText);
+
+const getCenterX = (character) => {
+  return character.x() + (characterWidth / 2);
+}
+const getCenterY = (character) => {
+  return character.y() + (characterHeight / 2);
+}
+
+let lastFocusedCharacter, lastLine;
+
+const updateFocusText = (characterText) => {
+  focusText.text(characterText.text());
+  focusText.fill(characterText.fill());
+}
+
+const updateTrace = (characterText) => {
+  if (!lastFocusedCharacter) { return }
+
+  // make new line
+  let newLine = new Konva.Line({
+    points: [
+      getCenterX(lastFocusedCharacter),
+      getCenterY(lastFocusedCharacter),
+      getCenterX(characterText),
+      getCenterY(characterText)
+    ],
+    fill: 'black',
+    stroke: 'black',
+    strokeWidth: 1
+  });
+  layer.add(newLine);
+
+  if (lastLine) {
+    // fade last line
+    let oldLine = lastLine;
+    let tween = new Konva.Tween({
+      node: oldLine,
+      duration: 1,
+      points: [
+        oldLine.points()[2],
+        oldLine.points()[3],
+        oldLine.points()[2],
+        oldLine.points()[3]
+      ],
+      onFinish: () => { oldLine.destroy() }
+    });
+
+    tween.play();
+  }
+
+  lastLine = newLine;
+}
+
+const characterTextMouseover = (characterText) => {
+  updateFocusText(characterText);
+  updateTrace(characterText);
+  layer.draw();
+
+  lastFocusedCharacter = characterText;
+}
 
 characterTexts.forEach((characterText) => {
   layer.add(characterText);
-
-  characterText.on('mouseover', () => {
-    // change the focusText and redraw
-    focusText.text(characterText.text());
-    focusText.fill(characterText.fill());
-    layer.draw();
-  });
+  characterText.on('mouseover', characterTextMouseover.bind(this, characterText));
 });
 
 stage.add(layer);
-
 layer.draw();
