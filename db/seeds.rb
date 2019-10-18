@@ -1,8 +1,8 @@
 # seed positions if table is empty
 if !Position.any?
   ActiveRecord::Base.transaction do
-    (0..28).each do |x|
-      (0..28).each do |y|
+    (0..28).each do |y|
+      (0..28).each do |x|
         Position.create!(x_coordinate: x, y_coordinate: y)
       end
     end
