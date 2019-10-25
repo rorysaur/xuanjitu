@@ -16,6 +16,7 @@ const constants = {
       yellow: '#fc0',
     },
     fontSize: 20,
+    strokeWidth: 1,
   },
   fadeIn: {
     maxDuration: 6,
@@ -50,7 +51,10 @@ const render = ({ characters }) => {
     height: constants.stage.height,
   });
 
-  let layer = new Konva.Layer();
+  let layer0 = new Konva.Layer();
+  let layer1 = new Konva.Layer();
+  let layer2 = new Konva.Layer();
+  let layers = [layer0, layer1, layer2];
 
   let characterTexts = characters.map((character) => {
     const { width, height, colorMappings, fontSize } = constants.characters;
@@ -63,7 +67,12 @@ const render = ({ characters }) => {
       fontFamily: 'Ma Shan Zheng',
       fontSize: fontSize,
       fill: constants.characters.colorMappings[character.color],
+      strokeWidth: constants.characters.strokeWidth,
     });
+
+    if (character.rhyme) {
+      newText.name('rhyme');
+    }
 
     return newText;
   });
@@ -79,7 +88,7 @@ const render = ({ characters }) => {
     width: constants.background.width,
     height: constants.background.height,
   });
-  layer.add(gridBackground);
+  layer0.add(gridBackground);
 
   let focusText = new Konva.Text({
     x: gridBackground.width() + constants.focusText.marginLeft,
@@ -88,7 +97,7 @@ const render = ({ characters }) => {
     fontFamily: 'Ma Shan Zheng',
     fontSize: constants.focusText.fontSize,
   });
-  layer.add(focusText);
+  layer2.add(focusText);
 
   let startButtonRed = new Konva.Label({
     x: focusText.x(),
@@ -113,21 +122,32 @@ const render = ({ characters }) => {
 
   const startButtonRedClick = () => {
     characterTexts.forEach((char) => {
-      let opacity = (char.fill() == 'red') ? constants.fadeOut.opacity : 0;
+      let opacity = 0;
+      if (char.fill() == 'red') {
+        if (char.name().match('rhyme')) {
+          opacity = 1;
+        } else {
+          opacity = constants.fadeOut.opacity;
+        }
+      }
 
       let fadeOut = new Konva.Tween({
         node: char,
         duration: 1,
         opacity: opacity,
+        onFinish: () => {
+          if (char.fill() == 'red' && !char.name().match('rhyme')) {
+            char.stroke('red');
+            char.fill('white');
+          }
+        }
       });
 
       fadeOut.play();
     });
-
-    layer.draw();
   }
 
-  layer.add(startButtonRed);
+  layer2.add(startButtonRed);
   startButtonRed.on('click', startButtonRedClick);
 
   const getCenterX = (character) => {
@@ -160,7 +180,7 @@ const render = ({ characters }) => {
       stroke: color,
       strokeWidth: strokeWidth,
     });
-    layer.add(newLine);
+    layer2.add(newLine);
 
     if (lastLine) {
       // fade last line
@@ -186,13 +206,13 @@ const render = ({ characters }) => {
   const characterTextMouseover = (characterText) => {
     // updateFocusText(characterText);
     // updateTrace(characterText);
-    layer.draw();
+    layer2.draw();
 
     lastFocusedCharacter = characterText;
   }
 
   characterTexts.forEach((characterText) => {
-    layer.add(characterText);
+    layer2.add(characterText);
 
     // fade in text
     characterText.opacity(0);
@@ -206,8 +226,10 @@ const render = ({ characters }) => {
     characterText.on('mouseover', characterTextMouseover.bind(this, characterText));
   });
 
-  stage.add(layer);
-  layer.draw();
+  layers.forEach(layer => {
+    stage.add(layer);
+    layer.draw();
+  });
 }
 
 $('.footer').hide();
