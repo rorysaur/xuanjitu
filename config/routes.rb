@@ -4,4 +4,5 @@ Rails.application.routes.draw do
   root "root#index"
 
   resources :characters, only: [:index]
+  resources :segments, only: [:index]
 end
