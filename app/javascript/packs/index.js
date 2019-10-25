@@ -20,6 +20,9 @@ const constants = {
   fadeIn: {
     maxDuration: 6,
   },
+  fadeOut: {
+    opacity: 0.3,
+  },
   focusText: {
     marginLeft: 20,
     fontSize: 200,
@@ -87,6 +90,46 @@ const render = ({ characters }) => {
   });
   layer.add(focusText);
 
+  let startButtonRed = new Konva.Label({
+    x: focusText.x(),
+    y: stage.height() / 3,
+  });
+
+  startButtonRed.add(
+    new Konva.Tag({
+      fill: 'red'
+    })
+  );
+
+  startButtonRed.add(
+    new Konva.Text({
+      text: 'start',
+      fontFamily: 'Roboto Mono',
+      fontSize: 18,
+      padding: 5,
+      fill: 'white'
+    })
+  );
+
+  const startButtonRedClick = () => {
+    characterTexts.forEach((char) => {
+      let opacity = (char.fill() == 'red') ? constants.fadeOut.opacity : 0;
+
+      let fadeOut = new Konva.Tween({
+        node: char,
+        duration: 1,
+        opacity: opacity,
+      });
+
+      fadeOut.play();
+    });
+
+    layer.draw();
+  }
+
+  layer.add(startButtonRed);
+  startButtonRed.on('click', startButtonRedClick);
+
   const getCenterX = (character) => {
     return character.x() + (characterWidth / 2);
   }
@@ -141,8 +184,8 @@ const render = ({ characters }) => {
   }
 
   const characterTextMouseover = (characterText) => {
-    updateFocusText(characterText);
-    updateTrace(characterText);
+    // updateFocusText(characterText);
+    // updateTrace(characterText);
     layer.draw();
 
     lastFocusedCharacter = characterText;
