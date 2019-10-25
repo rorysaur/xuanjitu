@@ -36,7 +36,7 @@ end
 
 # seed characters if table is empty
 if !Character.any?
-  file_path = File.join(Rails.root, "db", "data", "characters.txt")
+  file_path = File.join(Rails.root, "db", "data", "841.txt")
   text = File.read(file_path)
 
   ActiveRecord::Base.transaction do
