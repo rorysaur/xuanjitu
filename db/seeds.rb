@@ -36,8 +36,13 @@ end
 
 # seed characters if table is empty
 if !Character.any?
+  # read characters file
   file_path = File.join(Rails.root, "db", "data", "841.txt")
   text = File.read(file_path)
+
+  # read rhymes file
+  csv_path = File.join(Rails.root, "db", "data", "rhymes.csv")
+  rhymes = CSV.parse(File.read(csv_path), headers: true)
 
   ActiveRecord::Base.transaction do
     lines = text.split("\n")
@@ -53,6 +58,7 @@ if !Character.any?
           text: char,
           form: Character.forms[:simplified],
           position: position,
+          rhyme: rhymes[line_idx][char_idx].present?,
         )
       end
     end

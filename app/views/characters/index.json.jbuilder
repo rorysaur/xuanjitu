@@ -4,4 +4,5 @@ json.characters @characters do |char|
   json.x_coordinate char.x_coordinate
   json.y_coordinate char.y_coordinate
   json.color char.color
+  json.rhyme char.rhyme?
 end
