@@ -66,3 +66,30 @@ if !Character.any?
 else
   puts "#{Character.count} characters already exist!"
 end
+
+# seed segments if table is empty
+if !Segment.any?
+  segments_csv_path = File.join(Rails.root, "db", "data", "segments.csv")
+  segment_rows = CSV.parse(File.read(segments_csv_path), headers: true, converters: :integer)
+
+  ActiveRecord::Base.transaction do
+    segment_rows.each do |segment_row|
+      head_position = Position.find_by!(
+        x_coordinate: segment_row["head_x"],
+        y_coordinate: segment_row["head_y"],
+      )
+      tail_position = Position.find_by!(
+        x_coordinate: segment_row["tail_x"],
+        y_coordinate: segment_row["tail_y"],
+      )
+      Segment.create!(
+        head_position: head_position,
+        tail_position: tail_position,
+        length: segment_row["length"],
+        color: segment_row["color"],
+      )
+    end
+  end
+else
+  puts "#{Segment.count} segments already exist!"
+end

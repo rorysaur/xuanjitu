@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_25_192452) do
+ActiveRecord::Schema.define(version: 2019_10_25_213958) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,17 @@ ActiveRecord::Schema.define(version: 2019_10_25_192452) do
     t.string "color"
     t.index ["color"], name: "index_positions_on_color"
     t.index ["x_coordinate", "y_coordinate"], name: "index_positions_on_x_coordinate_and_y_coordinate"
+  end
+
+  create_table "segments", force: :cascade do |t|
+    t.integer "head_position_id", null: false
+    t.integer "tail_position_id", null: false
+    t.integer "length", null: false
+    t.string "color", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["head_position_id"], name: "index_segments_on_head_position_id"
+    t.index ["tail_position_id"], name: "index_segments_on_tail_position_id"
   end
 
 end
