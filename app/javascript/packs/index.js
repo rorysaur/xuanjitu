@@ -44,7 +44,16 @@ const constants = {
   }
 };
 
-const render = ({ characters }) => {
+let state = {
+  highlightedChars: [],
+};
+
+let characterGrid = new Array(29);
+for (let y = 0; y < characterGrid.length; y++) {
+  characterGrid[y] = new Array(29);
+}
+
+const render = ({ characters, segments }) => {
   let stage = new Konva.Stage({
     container: 'container',   // id of container <div>
     width: window.innerWidth,
@@ -68,11 +77,14 @@ const render = ({ characters }) => {
       fontSize: fontSize,
       fill: constants.characters.colorMappings[character.color],
       strokeWidth: constants.characters.strokeWidth,
+      character: character,
     });
 
     if (character.rhyme) {
       newText.name('rhyme');
     }
+
+    characterGrid[character.y_coordinate][character.x_coordinate] = newText;
 
     return newText;
   });
@@ -122,10 +134,16 @@ const render = ({ characters }) => {
 
   const startButtonRedClick = () => {
     characterTexts.forEach((char) => {
+      let x = char.x();
+      let y = char.y();
+      let size = char.fontSize();
       let opacity = 0;
       if (char.fill() == 'red') {
         if (char.name().match('rhyme')) {
           opacity = 1;
+          size = constants.characters.fontSize * 1.5;
+          x -= 5;
+          y -= 5;
         } else {
           opacity = constants.fadeOut.opacity;
         }
@@ -135,20 +153,74 @@ const render = ({ characters }) => {
         node: char,
         duration: 1,
         opacity: opacity,
-        onFinish: () => {
-          if (char.fill() == 'red' && !char.name().match('rhyme')) {
-            char.stroke('red');
-            char.fill('white');
-          }
-        }
+        fontSize: size,
+        x: x,
+        y: y,
       });
 
       fadeOut.play();
     });
+
+    const rhymeChars = layer2.find('.rhyme');
+    rhymeChars.forEach(rhymeChar => {
+      rhymeChar.on('mouseover', rhymeCharMouseover.bind(this, rhymeChar));
+      rhymeChar.on('mouseleave', rhymeCharMouseleave.bind(this, rhymeChar));
+    });
+
+    startButtonRed.destroy();
   }
 
   layer2.add(startButtonRed);
   startButtonRed.on('click', startButtonRedClick);
+
+  const rhymeCharMouseover = (charText) => {
+    const character = charText.getAttr('character');
+    const pos_x = character.x_coordinate;
+    const pos_y = character.y_coordinate;
+
+    // get segments where this character is the tail
+    const adjacentSegments = segments[pos_y][pos_x];
+
+    // highlight all characters in each segment
+    adjacentSegments.forEach(segment => {
+      if (segment.head_x == pos_x) {
+        // vertical segment
+        const lower = Math.min(segment.head_y, pos_y);
+        const higher = Math.max(segment.head_y, pos_y);
+        for (let y = lower; y <= higher; y++) {
+          let charInSegment = characterGrid[y][pos_x];
+          charInSegment.opacity(1);
+          if (!charInSegment.name().match('rhyme')) {
+            state.highlightedChars.push(charInSegment);
+          }
+        }
+      } else if (segment.head_y == pos_y) {
+        // horizontal segment
+        const lower = Math.min(segment.head_x, pos_x);
+        const higher = Math.max(segment.head_x, pos_x);
+        for (let x = lower; x <= higher; x++) {
+          let charInSegment = characterGrid[pos_y][x];
+          charInSegment.opacity(1);
+          if (!charInSegment.name().match('rhyme')) {
+            state.highlightedChars.push(charInSegment);
+          }
+        }
+      } else {
+        // diagonal segment
+      }
+    });
+
+    layer2.batchDraw();
+  }
+
+  const rhymeCharMouseleave = (charText) => {
+    state.highlightedChars.forEach(char => {
+      char.opacity(constants.fadeOut.opacity);
+    });
+    state.highlightedChars = [];
+
+    layer2.batchDraw();
+  }
 
   const getCenterX = (character) => {
     return character.x() + (characterWidth / 2);
@@ -230,14 +302,23 @@ const render = ({ characters }) => {
     stage.add(layer);
     layer.draw();
   });
+
 }
 
 $('.footer').hide();
 
-$.ajax({
-  url: '/characters.json'
-})
-.done((data) => {
+$.when(
+  $.ajax({
+    url: '/characters.json'
+  }),
+  $.ajax({
+    url: '/segments.json'
+  })
+).then((charactersResponse, segmentsResponse) => {
+  const data = {
+    characters: charactersResponse[0]["characters"],
+    segments: segmentsResponse[0]["segments"],
+  };
   render(data);
   $('.footer').show();
 });
