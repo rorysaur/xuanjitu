@@ -11,6 +11,24 @@ class Segment < ActiveRecord::Base
     yellow: "yellow",
   }
 
+  class << self
+    def as_grid_by_tail
+      segments = Segment.includes(:head_position, :tail_position).all
+
+      grid = Array.new(29){Array.new(29)}
+
+      (0..28).each do |y|
+        (0..28).each do |x|
+          grid[y][x] = segments.select do |segment|
+            segment.tail_x == x && segment.tail_y == y
+          end
+        end
+      end
+
+      grid
+    end
+  end
+
   def head_x
     head_position.x_coordinate
   end

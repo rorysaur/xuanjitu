@@ -1,8 +1,12 @@
-json.segments @segments do |segment|
-  json.head_x segment.head_x
-  json.head_y segment.head_y
-  json.tail_x segment.tail_x
-  json.tail_y segment.tail_y
-  json.length segment.length
-  json.color segment.color
+json.segments @segments do |rows|
+  json.array! rows do |segments|
+    json.array! segments do |segment|
+      json.head_x segment.head_x
+      json.head_y segment.head_y
+      json.tail_x segment.tail_x
+      json.tail_y segment.tail_y
+      json.length segment.length
+      json.color segment.color
+    end
+  end
 end
