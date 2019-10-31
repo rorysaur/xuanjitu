@@ -81,6 +81,8 @@ const render = ({ characters, segments }) => {
       character: character,
     });
 
+    newText.setAttr('segmentIds', character.segment_ids.map(id => id.toString()));
+
     if (character.rhyme) {
       newText.name('rhyme');
     }
@@ -134,6 +136,14 @@ const render = ({ characters, segments }) => {
   );
 
   const startButtonRedClick = () => {
+    let fadeOutGridBackground = new Konva.Tween({
+      node: gridBackground,
+      duration: 1,
+      opacity: 0,
+    });
+
+    fadeOutGridBackground.play();
+
     characterTexts.forEach((char) => {
       let x = char.x();
       let y = char.y();
@@ -141,6 +151,7 @@ const render = ({ characters, segments }) => {
       let opacity = 0;
       let fill = char.fill();
 
+      // set fade-out attrs
       if (char.fill() == 'red') {
         if (char.name().match('rhyme')) {
           opacity = 1;
@@ -148,6 +159,12 @@ const render = ({ characters, segments }) => {
           opacity = constants.fadeOut.opacity;
           fill = constants.fadeOut.fill;
         }
+      }
+
+      // bind events
+      if (char.fill() == 'red') {
+        char.on('mouseover', charMouseover.bind(this, char));
+        char.on('mouseleave', charMouseleave.bind(this, char));
       }
 
       let fadeOut = new Konva.Tween({
@@ -161,20 +178,6 @@ const render = ({ characters, segments }) => {
       });
 
       fadeOut.play();
-
-      let fadeOutGridBackground = new Konva.Tween({
-        node: gridBackground,
-        duration: 1,
-        opacity: 0,
-      });
-
-      fadeOutGridBackground.play();
-    });
-
-    const rhymeChars = layer2.find('.rhyme');
-    rhymeChars.forEach(rhymeChar => {
-      rhymeChar.on('mouseover', rhymeCharMouseover.bind(this, rhymeChar));
-      rhymeChar.on('mouseleave', rhymeCharMouseleave.bind(this, rhymeChar));
     });
 
     startButtonRed.destroy();
@@ -183,37 +186,28 @@ const render = ({ characters, segments }) => {
   layer2.add(startButtonRed);
   startButtonRed.on('click', startButtonRedClick);
 
-  const rhymeCharMouseover = (charText) => {
-    const character = charText.getAttr('character');
-    const pos_x = character.x_coordinate;
-    const pos_y = character.y_coordinate;
+  const charMouseover = (charText) => {
+    const segmentIds = charText.getAttr('segmentIds');
+    const segmentsForChar = segmentIds.map(segmentId => segments[segmentId]);
 
-    // get segments where this character is the tail
-    const adjacentSegments = segments[pos_y][pos_x];
-
-    // highlight all characters in each segment
-    adjacentSegments.forEach(segment => {
-      if (segment.head_x == pos_x) {
+    segmentsForChar.forEach(segment => {
+      if (segment.head_x == segment.tail_x) {
         // vertical segment
-        const lower = Math.min(segment.head_y, pos_y);
-        const higher = Math.max(segment.head_y, pos_y);
+        const lower = Math.min(segment.head_y, segment.tail_y);
+        const higher = Math.max(segment.head_y, segment.tail_y);
         for (let y = lower; y <= higher; y++) {
-          let charInSegment = characterGrid[y][pos_x];
+          let charInSegment = characterGrid[y][segment.head_x];
           charInSegment.fill('red');
-          if (!charInSegment.name().match('rhyme')) {
-            state.highlightedChars.push(charInSegment);
-          }
+          state.highlightedChars.push(charInSegment);
         }
-      } else if (segment.head_y == pos_y) {
+      } else if (segment.head_y == segment.tail_y) {
         // horizontal segment
-        const lower = Math.min(segment.head_x, pos_x);
-        const higher = Math.max(segment.head_x, pos_x);
+        const lower = Math.min(segment.head_x, segment.tail_x);
+        const higher = Math.max(segment.head_x, segment.tail_x);
         for (let x = lower; x <= higher; x++) {
-          let charInSegment = characterGrid[pos_y][x];
+          let charInSegment = characterGrid[segment.head_y][x];
           charInSegment.fill('red');
-          if (!charInSegment.name().match('rhyme')) {
-            state.highlightedChars.push(charInSegment);
-          }
+          state.highlightedChars.push(charInSegment);
         }
       } else {
         // diagonal segment
@@ -223,8 +217,11 @@ const render = ({ characters, segments }) => {
     layer2.batchDraw();
   }
 
-  const rhymeCharMouseleave = (charText) => {
+  const charMouseleave = (charText) => {
     state.highlightedChars.forEach(char => {
+      if (char.name().match('rhyme')) {
+        return;
+      }
       char.fill(constants.fadeOut.fill);
     });
     state.highlightedChars = [];
