@@ -1,6 +1,7 @@
 json.segments do
   @segments.each do |segment|
     json.set! segment.id do
+      json.id segment.id
       json.head_x segment.head_x
       json.head_y segment.head_y
       json.tail_x segment.tail_x

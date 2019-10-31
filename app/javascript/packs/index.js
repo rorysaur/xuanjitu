@@ -251,14 +251,24 @@ const render = ({ characters, segments }) => {
     return (charText.getAttr('characterState') == 'selected');
   }
 
-  const charMouseover = (charText) => {
-    if (charIsSelected(charText)) {
-      return;
+  const resetCharacterState = (charText) => {
+    let characterState;
+    if (charText.name().match('rhyme')) {
+      characterState = 'highlighted';
+    } else {
+      characterState = 'faded';
     }
 
+    charText.setAttrs(constants.characterStates[characterState]);
+  }
+
+  const charMouseover = (charText) => {
     segmentsForChar(charText).forEach(segment => {
       segmentEachChar(segment, (charInSegment) => {
-        charInSegment.fill('red');
+        if (charIsSelected(charInSegment)) {
+          return;
+        }
+        charInSegment.setAttrs(constants.characterStates.highlighted);
         state.highlightedChars.push(charInSegment);
       });
     });
@@ -268,11 +278,13 @@ const render = ({ characters, segments }) => {
 
   const charMouseleave = (charText) => {
     state.highlightedChars.forEach(char => {
-      if (char.name().match('rhyme') || charIsSelected(char)) {
+      if (charIsSelected(char) || char.name().match('rhyme')) {
         return;
       }
-      char.fill(constants.characterStates.faded.fill);
+
+      char.setAttrs(constants.characterStates.faded);
     });
+
     state.highlightedChars = [];
 
     layer2.batchDraw();
@@ -283,21 +295,63 @@ const render = ({ characters, segments }) => {
       return;
     }
 
-    const segments = segmentsForChar(charText);
-    if (segments.length == 0) {
+    const possibleSegments = segmentsForChar(charText);
+    if (possibleSegments.length == 0) {
       return;
     }
 
-    // now proceeding to select the segment
+    // if no segment selected: select the first one
+    if (!charIsSelected(charText)) {
+      const segment = possibleSegments[0];
 
-    // let's just take the first segment for now
-    const segment = segmentsForChar(charText)[0];
+      state.selectedSegmentIds.push(segment.id);
 
-    state.selectedSegments.push(segment);
+      segmentEachChar(segment, (charInSegment) => {
+        charInSegment.setAttrs(constants.characterStates.selected);
+      });
+    } else {
+      // else: a segment is selected
+      // which of the char's segments is selected?
+      const currentSegmentIndex = possibleSegments.findIndex(segment => {
+        return state.selectedSegmentIds.includes(segment.id);
+      });
 
-    segmentEachChar(segment, (charInSegment) => {
-      charInSegment.setAttrs(constants.characterStates.selected);
-    });
+      const currentSegment = possibleSegments[currentSegmentIndex];
+
+      // either way, clear current segment
+      segmentEachChar(currentSegment, (charInSegment) => {
+        const otherSelectedSegmentForChar = segmentsForChar(charInSegment).find(segment => {
+          const isAnotherSegment = (segment.id !== currentSegment.id);
+          const isSelected = state.selectedSegmentIds.includes(segment.id);
+
+          return isAnotherSegment && isSelected;
+        });
+
+        const safeToReset = (otherSelectedSegmentForChar === undefined);
+
+        if (!safeToReset) {
+          return;
+        }
+
+        resetCharacterState(charInSegment);
+      });
+
+      // in case the first is selected, advance to the second segment
+      if (currentSegmentIndex == 0) {
+        const nextSegment = possibleSegments[1];
+
+        const position = state.selectedSegmentIds.indexOf(currentSegment.id);
+        state.selectedSegmentIds[position] = nextSegment.id;
+
+        segmentEachChar(nextSegment, (charInSegment) => {
+          charInSegment.setAttrs(constants.characterStates.selected);
+        });
+      } else if (currentSegmentIndex == 1) {
+        // in case the second is selected, unselect it
+        const position = state.selectedSegmentIds.indexOf(currentSegment.id);
+        state.selectedSegmentIds.splice(position, 1);
+      }
+    }
 
     layer2.batchDraw();
   }
