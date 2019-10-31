@@ -93,3 +93,24 @@ if !Segment.any?
 else
   puts "#{Segment.count} segments already exist!"
 end
+
+# seed character_segment_assignments if table is empty
+if !CharacterSegmentAssignment.any?
+  segments = Segment.includes(:head_position, :tail_position).all
+  characters = Character.includes(:position).all
+
+  ActiveRecord::Base.transaction do
+    characters.each do |char|
+      segments.where(color: char.color).each do |segment|
+        if char.position.between?(segment.head_position, segment.tail_position)
+          CharacterSegmentAssignment.create!(
+            character: char,
+            segment: segment,
+          )
+        end
+      end
+    end
+  end
+else
+  puts "#{CharacterSegmentAssignment.count} character_segment_assignments already exist!"
+end

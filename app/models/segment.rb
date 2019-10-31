@@ -1,6 +1,8 @@
 class Segment < ActiveRecord::Base
   belongs_to :head_position, class_name: "Position"
   belongs_to :tail_position, class_name: "Position"
+  has_many :character_segment_assignments
+  has_many :characters, through: :character_segment_assignments
 
   enum color: {
     black: "black",
