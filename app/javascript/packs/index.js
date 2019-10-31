@@ -58,17 +58,17 @@ const constants = {
   }
 };
 
-let state = {
-  highlightedChars: [],
-  selectedSegments: [],
-};
-
 let characterGrid = new Array(29);
 for (let y = 0; y < characterGrid.length; y++) {
   characterGrid[y] = new Array(29);
 }
 
 const render = ({ characters, segments }) => {
+  let state = {
+    highlightedChars: [],
+    selectedSegmentIds: [],
+  };
+
   let stage = new Konva.Stage({
     container: 'container',   // id of container <div>
     width: window.innerWidth,
@@ -127,6 +127,24 @@ const render = ({ characters, segments }) => {
     fontSize: constants.focusText.fontSize,
   });
   layer2.add(focusText);
+
+  let resetButton = new Konva.Text({
+    x: focusText.x() + 70,
+    y: stage.height() / 3,
+    text: 'reset',
+    fontFamily: 'Roboto Mono',
+    fontSize: 18,
+    padding: 5,
+    fill: 'red',
+  });
+
+  const resetButtonClick = () => {
+    stage.destroy();
+    render(data);
+  }
+
+  layer2.add(resetButton);
+  resetButton.on('click', resetButtonClick);
 
   let startButtonRed = new Konva.Label({
     x: focusText.x(),
@@ -369,6 +387,8 @@ const render = ({ characters, segments }) => {
 
 $('.footer').hide();
 
+let data;
+
 $.when(
   $.ajax({
     url: '/characters.json'
@@ -377,7 +397,7 @@ $.when(
     url: '/segments.json'
   })
 ).then((charactersResponse, segmentsResponse) => {
-  const data = {
+  data = {
     characters: charactersResponse[0]["characters"],
     segments: segmentsResponse[0]["segments"],
   };
