@@ -1,7 +1,6 @@
-json.segments @segments do |rows|
-  json.array! rows do |segments|
-    json.array! segments do |segment|
-      json.id segment.id
+json.segments do
+  @segments.each do |segment|
+    json.set! segment.id do
       json.head_x segment.head_x
       json.head_y segment.head_y
       json.tail_x segment.tail_x

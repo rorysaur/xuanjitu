@@ -1,5 +1,5 @@
 class SegmentsController < ApplicationController
   def index
-    @segments = Segment.as_grid_by_tail
+    @segments = Segment.includes(:head_position, :tail_position).all
   end
 end
