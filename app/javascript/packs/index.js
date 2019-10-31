@@ -18,12 +18,25 @@ const constants = {
     fontSize: 20,
     strokeWidth: 1,
   },
+  characterStates: {
+    faded: {
+      fill: '#999',
+      opacity: 0.4,
+      characterState: 'faded',
+    },
+    highlighted: {
+      fill: 'red',
+      opacity: 0.4,
+      characterState: 'highlighted',
+    },
+    selected: {
+      fill: 'red',
+      opacity: 1,
+      characterState: 'selected',
+    }
+  },
   fadeIn: {
     maxDuration: 6,
-  },
-  fadeOut: {
-    fill: '#999',
-    opacity: 0.4,
   },
   focusText: {
     marginLeft: 20,
@@ -47,6 +60,7 @@ const constants = {
 
 let state = {
   highlightedChars: [],
+  selectedSegments: [],
 };
 
 let characterGrid = new Array(29);
@@ -154,10 +168,11 @@ const render = ({ characters, segments }) => {
       // set fade-out attrs
       if (char.fill() == 'red') {
         if (char.name().match('rhyme')) {
-          opacity = 1;
+          opacity = constants.characterStates.highlighted.opacity;
+          fill = constants.characterStates.highlighted.fill;
         } else {
-          opacity = constants.fadeOut.opacity;
-          fill = constants.fadeOut.fill;
+          opacity = constants.characterStates.faded.opacity;
+          fill = constants.characterStates.faded.fill;
         }
       }
 
@@ -165,6 +180,7 @@ const render = ({ characters, segments }) => {
       if (char.fill() == 'red') {
         char.on('mouseover', charMouseover.bind(this, char));
         char.on('mouseleave', charMouseleave.bind(this, char));
+        char.on('click', charClick.bind(this, char));
       }
 
       let fadeOut = new Konva.Tween({
@@ -213,7 +229,15 @@ const render = ({ characters, segments }) => {
     }
   }
 
+  const charIsSelected = (charText) => {
+    return (charText.getAttr('characterState') == 'selected');
+  }
+
   const charMouseover = (charText) => {
+    if (charIsSelected(charText)) {
+      return;
+    }
+
     segmentsForChar(charText).forEach(segment => {
       segmentEachChar(segment, (charInSegment) => {
         charInSegment.fill('red');
@@ -226,12 +250,36 @@ const render = ({ characters, segments }) => {
 
   const charMouseleave = (charText) => {
     state.highlightedChars.forEach(char => {
-      if (char.name().match('rhyme')) {
+      if (char.name().match('rhyme') || charIsSelected(char)) {
         return;
       }
-      char.fill(constants.fadeOut.fill);
+      char.fill(constants.characterStates.faded.fill);
     });
     state.highlightedChars = [];
+
+    layer2.batchDraw();
+  }
+
+  const charClick = (charText) => {
+    if (charText.name().match('rhyme')) {
+      return;
+    }
+
+    const segments = segmentsForChar(charText);
+    if (segments.length == 0) {
+      return;
+    }
+
+    // now proceeding to select the segment
+
+    // let's just take the first segment for now
+    const segment = segmentsForChar(charText)[0];
+
+    state.selectedSegments.push(segment);
+
+    segmentEachChar(segment, (charInSegment) => {
+      charInSegment.setAttrs(constants.characterStates.selected);
+    });
 
     layer2.batchDraw();
   }
