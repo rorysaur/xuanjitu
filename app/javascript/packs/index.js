@@ -22,7 +22,8 @@ const constants = {
     maxDuration: 6,
   },
   fadeOut: {
-    opacity: 0.3,
+    fill: '#999',
+    opacity: 0.4,
   },
   focusText: {
     marginLeft: 20,
@@ -138,14 +139,14 @@ const render = ({ characters, segments }) => {
       let y = char.y();
       let size = char.fontSize();
       let opacity = 0;
+      let fill = char.fill();
+
       if (char.fill() == 'red') {
         if (char.name().match('rhyme')) {
           opacity = 1;
-          size = constants.characters.fontSize * 1.5;
-          x -= 5;
-          y -= 5;
         } else {
           opacity = constants.fadeOut.opacity;
+          fill = constants.fadeOut.fill;
         }
       }
 
@@ -153,12 +154,21 @@ const render = ({ characters, segments }) => {
         node: char,
         duration: 1,
         opacity: opacity,
+        fill: fill,
         fontSize: size,
         x: x,
         y: y,
       });
 
       fadeOut.play();
+
+      let fadeOutGridBackground = new Konva.Tween({
+        node: gridBackground,
+        duration: 1,
+        opacity: 0,
+      });
+
+      fadeOutGridBackground.play();
     });
 
     const rhymeChars = layer2.find('.rhyme');
@@ -189,7 +199,7 @@ const render = ({ characters, segments }) => {
         const higher = Math.max(segment.head_y, pos_y);
         for (let y = lower; y <= higher; y++) {
           let charInSegment = characterGrid[y][pos_x];
-          charInSegment.opacity(1);
+          charInSegment.fill('red');
           if (!charInSegment.name().match('rhyme')) {
             state.highlightedChars.push(charInSegment);
           }
@@ -200,7 +210,7 @@ const render = ({ characters, segments }) => {
         const higher = Math.max(segment.head_x, pos_x);
         for (let x = lower; x <= higher; x++) {
           let charInSegment = characterGrid[pos_y][x];
-          charInSegment.opacity(1);
+          charInSegment.fill('red');
           if (!charInSegment.name().match('rhyme')) {
             state.highlightedChars.push(charInSegment);
           }
@@ -215,7 +225,7 @@ const render = ({ characters, segments }) => {
 
   const rhymeCharMouseleave = (charText) => {
     state.highlightedChars.forEach(char => {
-      char.opacity(constants.fadeOut.opacity);
+      char.fill(constants.fadeOut.fill);
     });
     state.highlightedChars = [];
 
