@@ -186,32 +186,39 @@ const render = ({ characters, segments }) => {
   layer2.add(startButtonRed);
   startButtonRed.on('click', startButtonRedClick);
 
-  const charMouseover = (charText) => {
+  const segmentsForChar = (charText) => {
     const segmentIds = charText.getAttr('segmentIds');
-    const segmentsForChar = segmentIds.map(segmentId => segments[segmentId]);
+    return segmentIds.map(segmentId => segments[segmentId]);
+  }
 
-    segmentsForChar.forEach(segment => {
-      if (segment.head_x == segment.tail_x) {
-        // vertical segment
-        const lower = Math.min(segment.head_y, segment.tail_y);
-        const higher = Math.max(segment.head_y, segment.tail_y);
-        for (let y = lower; y <= higher; y++) {
-          let charInSegment = characterGrid[y][segment.head_x];
-          charInSegment.fill('red');
-          state.highlightedChars.push(charInSegment);
-        }
-      } else if (segment.head_y == segment.tail_y) {
-        // horizontal segment
-        const lower = Math.min(segment.head_x, segment.tail_x);
-        const higher = Math.max(segment.head_x, segment.tail_x);
-        for (let x = lower; x <= higher; x++) {
-          let charInSegment = characterGrid[segment.head_y][x];
-          charInSegment.fill('red');
-          state.highlightedChars.push(charInSegment);
-        }
-      } else {
-        // diagonal segment
+  const segmentEachChar = (segment, fn) => {
+    if (segment.head_x == segment.tail_x) {
+      // vertical segment
+      const lower = Math.min(segment.head_y, segment.tail_y);
+      const higher = Math.max(segment.head_y, segment.tail_y);
+      for (let y = lower; y <= higher; y++) {
+        let charInSegment = characterGrid[y][segment.head_x];
+        fn(charInSegment);
       }
+    } else if (segment.head_y == segment.tail_y) {
+      // horizontal segment
+      const lower = Math.min(segment.head_x, segment.tail_x);
+      const higher = Math.max(segment.head_x, segment.tail_x);
+      for (let x = lower; x <= higher; x++) {
+        let charInSegment = characterGrid[segment.head_y][x];
+        fn(charInSegment);
+      }
+    } else {
+      // diagonal segment
+    }
+  }
+
+  const charMouseover = (charText) => {
+    segmentsForChar(charText).forEach(segment => {
+      segmentEachChar(segment, (charInSegment) => {
+        charInSegment.fill('red');
+        state.highlightedChars.push(charInSegment);
+      });
     });
 
     layer2.batchDraw();
