@@ -42,6 +42,12 @@ const constants = {
     marginLeft: 20,
     fontSize: 200,
   },
+  readingText: {
+    lineHeight: 45,
+    marginLeft: 20,
+    fontSize: 30,
+    y: 400,
+  },
   stage: {
     height: 750,
   },
@@ -258,6 +264,26 @@ const render = ({ characters, segments }) => {
     return mapped;
   }
 
+  const currentReading = new Konva.Group({
+    x: gridBackground.width() + constants.readingText.marginLeft,
+    y: constants.readingText.y,
+  });
+  layer2.add(currentReading);
+
+  const textForSegment = (segment, index) => {
+    const text = segmentEachChar(segment, char => char.text()).join('');
+
+    return new Konva.Text({
+      x: 0,
+      y: index * constants.readingText.lineHeight,
+      text: text,
+      fontFamily: 'Ma Shan Zheng',
+      fontSize: constants.readingText.fontSize,
+      fill: 'red',
+      segmentId: segment.id,
+    });
+  }
+
   const charIsSelected = (charText) => {
     return (charText.getAttr('characterState') == 'selected');
   }
@@ -271,6 +297,24 @@ const render = ({ characters, segments }) => {
     }
 
     charText.setAttrs(constants.characterStates[characterState]);
+  }
+
+
+  const updateCurrentReading = () => {
+    // destroy old text objects
+    const oldTexts = currentReading.getChildren();
+    currentReading.removeChildren();
+    oldTexts.forEach(text => text.destroy());
+
+    // create new text objects
+    const selectedSegments = state.selectedSegmentIds.map(segmentId => segments[segmentId]);
+
+    selectedSegments.forEach((segment, index) => {
+      const textObject = textForSegment(segment, index);
+      currentReading.add(textObject);
+    });
+
+    layer2.batchDraw();
   }
 
   const charMouseover = (charText) => {
@@ -363,6 +407,8 @@ const render = ({ characters, segments }) => {
         state.selectedSegmentIds.splice(position, 1);
       }
     }
+
+    updateCurrentReading();
 
     layer2.batchDraw();
   }
