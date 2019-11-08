@@ -226,25 +226,36 @@ const render = ({ characters, segments }) => {
   }
 
   const segmentEachChar = (segment, fn) => {
+    let mapped = [];
+
+    const callFnForCoordinates = (x, y) => {
+      let charInSegment = characterGrid[y][x];
+      let result = fn(charInSegment);
+      mapped.push(result);
+    }
+
     if (segment.head_x == segment.tail_x) {
       // vertical segment
-      const lower = Math.min(segment.head_y, segment.tail_y);
-      const higher = Math.max(segment.head_y, segment.tail_y);
-      for (let y = lower; y <= higher; y++) {
-        let charInSegment = characterGrid[y][segment.head_x];
-        fn(charInSegment);
+      let y = segment.head_y;
+      while (y !== segment.tail_y) {
+        callFnForCoordinates(segment.head_x, y);
+        y += (segment.head_y < segment.tail_y) ? 1 : -1;
       }
+      callFnForCoordinates(segment.tail_x, segment.tail_y);
+
     } else if (segment.head_y == segment.tail_y) {
       // horizontal segment
-      const lower = Math.min(segment.head_x, segment.tail_x);
-      const higher = Math.max(segment.head_x, segment.tail_x);
-      for (let x = lower; x <= higher; x++) {
-        let charInSegment = characterGrid[segment.head_y][x];
-        fn(charInSegment);
+      let x = segment.head_x;
+      while (x !== segment.tail_x) {
+        callFnForCoordinates(x, segment.head_y);
+        x += (segment.head_x < segment.tail_x) ? 1 : -1;
       }
+      callFnForCoordinates(segment.tail_x, segment.tail_y);
     } else {
       // diagonal segment
     }
+
+    return mapped;
   }
 
   const charIsSelected = (charText) => {
