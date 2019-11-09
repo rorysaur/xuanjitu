@@ -357,6 +357,49 @@ add more segments!`;
     layer2.batchDraw();
   }
 
+  const playCurrentReading = () => {
+    // destroy old text objects
+    const oldTexts = currentReading.getChildren();
+    currentReading.removeChildren();
+    oldTexts.forEach(text => text.destroy());
+
+    // create new text objects
+    const selectedSegments = state.selectedSegmentIds.map(segmentId => segments[segmentId]);
+
+    let delay = 0;
+
+    selectedSegments.forEach((segment, index) => {
+      const y = index * constants.readingText.lineHeight;
+      let x = 0;
+
+      segmentEachChar(segment, char => {
+        const charText = new Konva.Text({
+          x: x,
+          y: y,
+          text: char.text(),
+          fontFamily: 'Ma Shan Zheng',
+          fontSize: constants.readingText.fontSize,
+          fill: 'red',
+          opacity: 0,
+          segmentId: segment.id,
+        });
+
+        currentReading.add(charText);
+        layer2.batchDraw();
+
+        const fadeIn = new Konva.Tween({
+          node: charText,
+          duration: 0.5,
+          opacity: 1,
+        });
+        setTimeout(() => fadeIn.play(), delay);
+
+        x += charText.width();
+        delay += 200;
+      });
+    });
+  }
+
   const charMouseover = (charText) => {
     segmentsForChar(charText).forEach(segment => {
       segmentEachChar(segment, (charInSegment) => {
@@ -408,8 +451,6 @@ add more segments!`;
       segmentEachChar(segment, (charInSegment) => {
         charInSegment.setAttrs(constants.characterStates.selected);
       });
-
-      setInstructionText('selected');
     } else {
       // else: a segment is selected
       // which of the char's segments is selected?
@@ -456,8 +497,14 @@ add more segments!`;
 
     updateCurrentReading();
 
-    if (state.selectedSegmentIds.length === 4) {
+    const lineCount = state.selectedSegmentIds.length;
+    if (lineCount === 4) {
       setInstructionText('complete');
+      playCurrentReading();
+    } else if (lineCount === 0) {
+      setInstructionText('unselected');
+    } else {
+      setInstructionText('selected');
     }
 
     layer2.batchDraw();
