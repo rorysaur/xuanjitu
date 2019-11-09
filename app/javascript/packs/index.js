@@ -190,7 +190,7 @@ const render = ({ characters, segments }) => {
       let fill = char.fill();
 
       // set fade-out attrs
-      if (char.fill() == 'red') {
+      if (char.fill() === 'red') {
         if (char.name().match('rhyme')) {
           opacity = constants.characterStates.highlighted.opacity;
           fill = constants.characterStates.highlighted.fill;
@@ -201,7 +201,7 @@ const render = ({ characters, segments }) => {
       }
 
       // bind events
-      if (char.fill() == 'red') {
+      if (char.fill() === 'red') {
         char.on('mouseover', charMouseover.bind(this, char));
         char.on('mouseleave', charMouseleave.bind(this, char));
         char.on('click', charClick.bind(this, char));
@@ -240,7 +240,7 @@ const render = ({ characters, segments }) => {
       mapped.push(result);
     }
 
-    if (segment.head_x == segment.tail_x) {
+    if (segment.head_x === segment.tail_x) {
       // vertical segment
       let y = segment.head_y;
       while (y !== segment.tail_y) {
@@ -249,7 +249,7 @@ const render = ({ characters, segments }) => {
       }
       callFnForCoordinates(segment.tail_x, segment.tail_y);
 
-    } else if (segment.head_y == segment.tail_y) {
+    } else if (segment.head_y === segment.tail_y) {
       // horizontal segment
       let x = segment.head_x;
       while (x !== segment.tail_x) {
@@ -285,7 +285,7 @@ const render = ({ characters, segments }) => {
   }
 
   const charIsSelected = (charText) => {
-    return (charText.getAttr('characterState') == 'selected');
+    return (charText.getAttr('characterState') === 'selected');
   }
 
   const resetCharacterState = (charText) => {
@@ -351,7 +351,7 @@ const render = ({ characters, segments }) => {
     }
 
     const possibleSegments = segmentsForChar(charText);
-    if (possibleSegments.length == 0) {
+    if (possibleSegments.length === 0) {
       return;
     }
 
@@ -392,7 +392,7 @@ const render = ({ characters, segments }) => {
       });
 
       // in case the first is selected, advance to the second segment
-      if (currentSegmentIndex == 0) {
+      if (currentSegmentIndex === 0) {
         const nextSegment = possibleSegments[1];
 
         const position = state.selectedSegmentIds.indexOf(currentSegment.id);
@@ -401,7 +401,7 @@ const render = ({ characters, segments }) => {
         segmentEachChar(nextSegment, (charInSegment) => {
           charInSegment.setAttrs(constants.characterStates.selected);
         });
-      } else if (currentSegmentIndex == 1) {
+      } else if (currentSegmentIndex === 1) {
         // in case the second is selected, unselect it
         const position = state.selectedSegmentIds.indexOf(currentSegment.id);
         state.selectedSegmentIds.splice(position, 1);
