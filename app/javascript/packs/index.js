@@ -212,6 +212,8 @@ const render = ({ characters, segments }) => {
     });
 
     startButtonRed.destroy();
+
+    setInstructionText('unselected');
   }
 
   layer2.add(startButtonRed);
@@ -245,6 +247,24 @@ const render = ({ characters, segments }) => {
     width: 200,
   });
   layer2.add(instructionText);
+
+  const setInstructionText = state => {
+    let text;
+
+    if (state === 'unselected') {
+      text = `click on a segment to add it to your reading.\n\n\
+words in light red are rhyme words.`;
+    } else if (state === 'selected') {
+      text = `you can click on a segment again to reverse it.\
+(this also changes the rhyme word.)\n\n\
+you can click once more to unselect the segment.\n\n\
+add more segments!`;
+    } else if (state === 'complete') {
+      text = `you have a complete 4-line poem!`;
+    }
+
+    instructionText.text(text);
+  }
 
   const segmentsForChar = (charText) => {
     const segmentIds = charText.getAttr('segmentIds');
@@ -384,6 +404,8 @@ const render = ({ characters, segments }) => {
       segmentEachChar(segment, (charInSegment) => {
         charInSegment.setAttrs(constants.characterStates.selected);
       });
+
+      setInstructionText('selected');
     } else {
       // else: a segment is selected
       // which of the char's segments is selected?
@@ -429,6 +451,10 @@ const render = ({ characters, segments }) => {
     }
 
     updateCurrentReading();
+
+    if (state.selectedSegmentIds.length === 4) {
+      setInstructionText('complete');
+    }
 
     layer2.batchDraw();
   }
