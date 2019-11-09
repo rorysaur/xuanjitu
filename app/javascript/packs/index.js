@@ -4,6 +4,10 @@ const constants = {
     height: 750,
     color: '#eee',
   },
+  buttons: {
+    marginLeft: 20,
+    y: 30,
+  },
   characters: {
     width: 25,
     height: 25,
@@ -41,12 +45,17 @@ const constants = {
   focusText: {
     marginLeft: 20,
     fontSize: 200,
+    y: 500
+  },
+  instructionText: {
+    marginLeft: 20,
+    y: 100,
   },
   readingText: {
     lineHeight: 45,
     marginLeft: 20,
     fontSize: 30,
-    y: 400,
+    y: 300,
   },
   stage: {
     height: 750,
@@ -127,34 +136,16 @@ const render = ({ characters, segments }) => {
 
   let focusText = new Konva.Text({
     x: gridBackground.width() + constants.focusText.marginLeft,
-    y: 0,
+    y: constants.focusText.y,
     text: '',
     fontFamily: 'Ma Shan Zheng',
     fontSize: constants.focusText.fontSize,
   });
   layer2.add(focusText);
 
-  let resetButton = new Konva.Text({
-    x: focusText.x() + 70,
-    y: stage.height() / 3,
-    text: 'reset',
-    fontFamily: 'Roboto Mono',
-    fontSize: 18,
-    padding: 5,
-    fill: 'red',
-  });
-
-  const resetButtonClick = () => {
-    stage.destroy();
-    render(data);
-  }
-
-  layer2.add(resetButton);
-  resetButton.on('click', resetButtonClick);
-
   let startButtonRed = new Konva.Label({
-    x: focusText.x(),
-    y: stage.height() / 3,
+    x: gridBackground.width() + constants.buttons.marginLeft,
+    y: constants.buttons.y,
   });
 
   startButtonRed.add(
@@ -225,6 +216,35 @@ const render = ({ characters, segments }) => {
 
   layer2.add(startButtonRed);
   startButtonRed.on('click', startButtonRedClick);
+
+  let resetButton = new Konva.Text({
+    x: startButtonRed.x() + 70,
+    y: constants.buttons.y,
+    text: 'reset',
+    fontFamily: 'Roboto Mono',
+    fontSize: 18,
+    padding: 5,
+    fill: 'red',
+  });
+
+  const resetButtonClick = () => {
+    stage.destroy();
+    render(data);
+  }
+
+  layer2.add(resetButton);
+  resetButton.on('click', resetButtonClick);
+
+  const instructionText = new Konva.Text({
+    x: gridBackground.width() + constants.instructionText.marginLeft,
+    y: constants.instructionText.y,
+    text: 'hi there!',
+    fontFamily: 'Roboto Mono',
+    fontSize: 14,
+    fill: 'black',
+    width: 200,
+  });
+  layer2.add(instructionText);
 
   const segmentsForChar = (charText) => {
     const segmentIds = charText.getAttr('segmentIds');
