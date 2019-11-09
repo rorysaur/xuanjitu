@@ -397,6 +397,10 @@ add more segments!`;
 
     // if no segment selected: select the first one
     if (!charIsSelected(charText)) {
+      if (state.selectedSegmentIds.length === 4) {
+        return;
+      }
+
       const segment = possibleSegments[0];
 
       state.selectedSegmentIds.push(segment.id);
