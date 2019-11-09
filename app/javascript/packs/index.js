@@ -248,18 +248,20 @@ const render = ({ characters, segments }) => {
   });
   layer2.add(instructionText);
 
-  const setInstructionText = state => {
+  const setInstructionText = readingState => {
+    const segmentsRemaining = 4 - state.selectedSegmentIds.length;
     let text;
 
-    if (state === 'unselected') {
+    if (readingState === 'unselected') {
       text = `click on a segment to add it to your reading.\n\n\
-words in light red are rhyme words.`;
-    } else if (state === 'selected') {
+words in light red are rhyme words.\n\n\
+add ${segmentsRemaining} more segments!`;
+    } else if (readingState === 'selected') {
       text = `you can click on a segment again to reverse it.\
 (this also changes the rhyme word.)\n\n\
 you can click once more to unselect the segment.\n\n\
-add more segments!`;
-    } else if (state === 'complete') {
+add ${segmentsRemaining} more segments!`;
+    } else if (readingState === 'complete') {
       text = `you have a complete 4-line poem!`;
     }
 
