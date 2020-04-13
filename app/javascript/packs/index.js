@@ -195,7 +195,7 @@ const render = ({ characters, segments }) => {
       if (char.fill() === 'red') {
         char.on('mouseover', charMouseover.bind(this, char));
         char.on('mouseleave', charMouseleave.bind(this, char));
-        char.on('click', charClick.bind(this, char));
+        char.on('click tap', charClick.bind(this, char));
       }
 
       let fadeOut = new Konva.Tween({
@@ -217,7 +217,7 @@ const render = ({ characters, segments }) => {
   }
 
   layer2.add(startButtonRed);
-  startButtonRed.on('click', startButtonRedClick);
+  startButtonRed.on('click tap', startButtonRedClick);
 
   let resetButton = new Konva.Text({
     x: startButtonRed.x() + 70,
@@ -235,7 +235,7 @@ const render = ({ characters, segments }) => {
   }
 
   layer2.add(resetButton);
-  resetButton.on('click', resetButtonClick);
+  resetButton.on('click tap', resetButtonClick);
 
   const instructionText = new Konva.Text({
     x: gridBackground.width() + constants.instructionText.marginLeft,
