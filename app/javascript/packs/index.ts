@@ -1,3 +1,5 @@
+import Konva from 'konva';
+
 const constants = {
   background: {
     width: 750,
@@ -346,7 +348,7 @@ add ${segmentsRemaining} more segments!`;
     // destroy old text objects
     const oldTexts = currentReading.getChildren();
     currentReading.removeChildren();
-    oldTexts.forEach(text => text.destroy());
+    oldTexts.each(text => text.destroy());
 
     // create new text objects
     const selectedSegments = state.selectedSegmentIds.map(segmentId => segments[segmentId]);
@@ -363,7 +365,7 @@ add ${segmentsRemaining} more segments!`;
     // destroy old text objects
     const oldTexts = currentReading.getChildren();
     currentReading.removeChildren();
-    oldTexts.forEach(text => text.destroy());
+    oldTexts.each(text => text.destroy());
 
     // create new text objects
     const selectedSegments = state.selectedSegmentIds.map(segmentId => segments[segmentId]);
@@ -612,5 +614,5 @@ $.when(
     segments: segmentsResponse[0]["segments"],
   };
   render(data);
-  $('.footer').show();
+  // $('.footer').show();
 });

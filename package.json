@@ -6,11 +6,17 @@
     "@rails/activestorage": "^6.0.0-alpha",
     "@rails/ujs": "^6.0.0-alpha",
     "@rails/webpacker": "^4.0.7",
+    "@types/jquery": "^3.5.0",
     "jquery": "^3.5.0",
-    "konva": "^4.0.15"
+    "konva": "^4.0.15",
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.9.6"
   },
   "version": "0.1.0",
   "devDependencies": {
+    "eslint": "^7.4.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
     "webpack-dev-server": "^3.8.2"
   }
 }
