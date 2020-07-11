@@ -75,8 +75,8 @@ const constants = {
   }
 };
 
-let characterGrid = new Array(29);
-for (let y = 0; y < characterGrid.length; y++) {
+let characterGrid: Konva.Text[][] = new Array(29);
+for (let y = 0; y < characterGrid.length; y++) { // check for loops
   characterGrid[y] = new Array(29);
 }
 
@@ -92,16 +92,16 @@ const render = ({ characters, segments }) => {
     height: constants.stage.height,
   });
 
-  let layer0 = new Konva.Layer();
-  let layer1 = new Konva.Layer();
-  let layer2 = new Konva.Layer();
-  let layers = [layer0, layer1, layer2];
+  let layer0: Konva.Layer = new Konva.Layer();
+  let layer1: Konva.Layer = new Konva.Layer();
+  let layer2: Konva.Layer = new Konva.Layer();
+  let layers: Konva.Layer[] = [layer0, layer1, layer2];
 
   let characterTexts = characters.map((character) => {
-    const { width, height, colorMappings, fontSize } = constants.characters;
+    const { width, height, colorMappings, fontSize } = constants.characters; // check destructuring
     const { offset } = constants.text;
 
-    const newText = new Konva.Text({
+    const newText: Konva.Text = new Konva.Text({
       x: (character.x_coordinate * width) + offset.x,
       y: (character.y_coordinate * height) + offset.y,
       text: character.text,
@@ -123,10 +123,10 @@ const render = ({ characters, segments }) => {
     return newText;
   });
 
-  let characterWidth = characterTexts[0].width();
-  let characterHeight = characterTexts[0].height();
+  let characterWidth: number = characterTexts[0].width();
+  let characterHeight: number = characterTexts[0].height();
 
-  let gridBackground = new Konva.Rect({
+  let gridBackground: Konva.Rect = new Konva.Rect({
     x: 0,
     y: 0,
     strokeWidth: 5,
@@ -136,7 +136,7 @@ const render = ({ characters, segments }) => {
   });
   layer0.add(gridBackground);
 
-  let focusText = new Konva.Text({
+  let focusText: Konva.Text = new Konva.Text({
     x: gridBackground.width() + constants.focusText.marginLeft,
     y: constants.focusText.y,
     text: '',
@@ -145,7 +145,7 @@ const render = ({ characters, segments }) => {
   });
   layer2.add(focusText);
 
-  let startButtonRed = new Konva.Label({
+  let startButtonRed: Konva.Label = new Konva.Label({
     x: gridBackground.width() + constants.buttons.marginLeft,
     y: constants.buttons.y,
   });
@@ -176,11 +176,11 @@ const render = ({ characters, segments }) => {
     fadeOutGridBackground.play();
 
     characterTexts.forEach((char) => {
-      let x = char.x();
-      let y = char.y();
-      let size = char.fontSize();
-      let opacity = 0;
-      let fill = char.fill();
+      let x: number = char.x();
+      let y: number = char.y();
+      let size: number = char.fontSize();
+      let opacity: number = 0;
+      let fill: string = char.fill();
 
       // set fade-out attrs
       if (char.fill() === 'red') {
@@ -200,7 +200,7 @@ const render = ({ characters, segments }) => {
         char.on('click tap', charClick.bind(this, char));
       }
 
-      let fadeOut = new Konva.Tween({
+      let fadeOut: Konva.Tween = new Konva.Tween({
         node: char,
         duration: 1,
         opacity: opacity,
@@ -221,7 +221,7 @@ const render = ({ characters, segments }) => {
   layer2.add(startButtonRed);
   startButtonRed.on('click tap', startButtonRedClick);
 
-  let resetButton = new Konva.Text({
+  let resetButton: Konva.Text = new Konva.Text({
     x: startButtonRed.x() + 70,
     y: constants.buttons.y,
     text: 'reset',
@@ -239,7 +239,7 @@ const render = ({ characters, segments }) => {
   layer2.add(resetButton);
   resetButton.on('click tap', resetButtonClick);
 
-  const instructionText = new Konva.Text({
+  const instructionText: Konva.Text = new Konva.Text({
     x: gridBackground.width() + constants.instructionText.marginLeft,
     y: constants.instructionText.y,
     text: 'hi there!',
@@ -251,8 +251,8 @@ const render = ({ characters, segments }) => {
   layer2.add(instructionText);
 
   const setInstructionText = readingState => {
-    const segmentsRemaining = 4 - state.selectedSegmentIds.length;
-    let text;
+    const segmentsRemaining: number = 4 - state.selectedSegmentIds.length;
+    let text: string;
 
     if (readingState === 'unselected') {
       text = `click on a segment to add it to your reading.\n\n\
@@ -271,22 +271,22 @@ add ${segmentsRemaining} more segments!`;
   }
 
   const segmentsForChar = (charText) => {
-    const segmentIds = charText.getAttr('segmentIds');
+    const segmentIds: string[] = charText.getAttr('segmentIds'); // check ?
     return segmentIds.map(segmentId => segments[segmentId]);
   }
 
   const segmentEachChar = (segment, fn) => {
-    let mapped = [];
+    let mapped: any[] = [];
 
     const callFnForCoordinates = (x, y) => {
-      let charInSegment = characterGrid[y][x];
+      let charInSegment: Konva.Text = characterGrid[y][x];
       let result = fn(charInSegment);
       mapped.push(result);
     }
 
     if (segment.head_x === segment.tail_x) {
       // vertical segment
-      let y = segment.head_y;
+      let y: number = segment.head_y;
       while (y !== segment.tail_y) {
         callFnForCoordinates(segment.head_x, y);
         y += (segment.head_y < segment.tail_y) ? 1 : -1;
@@ -295,7 +295,7 @@ add ${segmentsRemaining} more segments!`;
 
     } else if (segment.head_y === segment.tail_y) {
       // horizontal segment
-      let x = segment.head_x;
+      let x: number = segment.head_x;
       while (x !== segment.tail_x) {
         callFnForCoordinates(x, segment.head_y);
         x += (segment.head_x < segment.tail_x) ? 1 : -1;
@@ -308,14 +308,14 @@ add ${segmentsRemaining} more segments!`;
     return mapped;
   }
 
-  const currentReading = new Konva.Group({
+  const currentReading: Konva.Group = new Konva.Group({
     x: gridBackground.width() + constants.readingText.marginLeft,
     y: constants.readingText.y,
   });
   layer2.add(currentReading);
 
   const textForSegment = (segment, index) => {
-    const text = segmentEachChar(segment, char => char.text()).join('');
+    const text: string = segmentEachChar(segment, char => char.text()).join('');
 
     return new Konva.Text({
       x: 0,
@@ -333,7 +333,7 @@ add ${segmentsRemaining} more segments!`;
   }
 
   const resetCharacterState = (charText) => {
-    let characterState;
+    let characterState: string;
     if (charText.name().match('rhyme')) {
       characterState = 'highlighted';
     } else {
@@ -346,15 +346,15 @@ add ${segmentsRemaining} more segments!`;
 
   const updateCurrentReading = () => {
     // destroy old text objects
-    const oldTexts = currentReading.getChildren();
+    const oldTexts: any = currentReading.getChildren();
     currentReading.removeChildren();
     oldTexts.each(text => text.destroy());
 
     // create new text objects
-    const selectedSegments = state.selectedSegmentIds.map(segmentId => segments[segmentId]);
+    const selectedSegments: any[] = state.selectedSegmentIds.map(segmentId => segments[segmentId]);
 
     selectedSegments.forEach((segment, index) => {
-      const textObject = textForSegment(segment, index);
+      const textObject: Konva.Text = textForSegment(segment, index);
       currentReading.add(textObject);
     });
 
@@ -363,21 +363,21 @@ add ${segmentsRemaining} more segments!`;
 
   const playCurrentReading = () => {
     // destroy old text objects
-    const oldTexts = currentReading.getChildren();
+    const oldTexts: any = currentReading.getChildren();
     currentReading.removeChildren();
     oldTexts.each(text => text.destroy());
 
     // create new text objects
-    const selectedSegments = state.selectedSegmentIds.map(segmentId => segments[segmentId]);
+    const selectedSegments: any[] = state.selectedSegmentIds.map(segmentId => segments[segmentId]);
 
-    let delay = 0;
+    let delay: number = 0;
 
     selectedSegments.forEach((segment, index) => {
-      const y = index * constants.readingText.lineHeight;
-      let x = 0;
+      const y: number = index * constants.readingText.lineHeight;
+      let x: number = 0;
 
       segmentEachChar(segment, char => {
-        const charText = new Konva.Text({
+        const charText: Konva.Text = new Konva.Text({
           x: x,
           y: y,
           text: char.text(),
@@ -391,7 +391,7 @@ add ${segmentsRemaining} more segments!`;
         currentReading.add(charText);
         layer2.batchDraw();
 
-        const fadeIn = new Konva.Tween({
+        const fadeIn: Konva.Tween = new Konva.Tween({
           node: charText,
           duration: 0.5,
           opacity: 1,
@@ -437,7 +437,7 @@ add ${segmentsRemaining} more segments!`;
       return;
     }
 
-    const possibleSegments = segmentsForChar(charText);
+    const possibleSegments: any[] = segmentsForChar(charText);
     if (possibleSegments.length === 0) {
       return;
     }
@@ -448,7 +448,7 @@ add ${segmentsRemaining} more segments!`;
         return;
       }
 
-      const segment = possibleSegments[0];
+      const segment: any = possibleSegments[0];
 
       state.selectedSegmentIds.push(segment.id);
 
@@ -458,22 +458,22 @@ add ${segmentsRemaining} more segments!`;
     } else {
       // else: a segment is selected
       // which of the char's segments is selected?
-      const currentSegmentIndex = possibleSegments.findIndex(segment => {
+      const currentSegmentIndex: number = possibleSegments.findIndex(segment => {
         return state.selectedSegmentIds.includes(segment.id);
       });
 
-      const currentSegment = possibleSegments[currentSegmentIndex];
+      const currentSegment: any = possibleSegments[currentSegmentIndex];
 
       // either way, clear current segment
       segmentEachChar(currentSegment, (charInSegment) => {
-        const otherSelectedSegmentForChar = segmentsForChar(charInSegment).find(segment => {
-          const isAnotherSegment = (segment.id !== currentSegment.id);
-          const isSelected = state.selectedSegmentIds.includes(segment.id);
+        const otherSelectedSegmentForChar: any = segmentsForChar(charInSegment).find(segment => {
+          const isAnotherSegment: boolean = (segment.id !== currentSegment.id);
+          const isSelected: boolean = state.selectedSegmentIds.includes(segment.id);
 
           return isAnotherSegment && isSelected;
         });
 
-        const safeToReset = (otherSelectedSegmentForChar === undefined);
+        const safeToReset: boolean = (otherSelectedSegmentForChar === undefined);
 
         if (!safeToReset) {
           return;
@@ -484,9 +484,9 @@ add ${segmentsRemaining} more segments!`;
 
       // in case the first is selected, advance to the second segment
       if (currentSegmentIndex === 0) {
-        const nextSegment = possibleSegments[1];
+        const nextSegment: any = possibleSegments[1];
 
-        const position = state.selectedSegmentIds.indexOf(currentSegment.id);
+        const position: number = state.selectedSegmentIds.indexOf(currentSegment.id);
         state.selectedSegmentIds[position] = nextSegment.id;
 
         segmentEachChar(nextSegment, (charInSegment) => {
@@ -494,14 +494,14 @@ add ${segmentsRemaining} more segments!`;
         });
       } else if (currentSegmentIndex === 1) {
         // in case the second is selected, unselect it
-        const position = state.selectedSegmentIds.indexOf(currentSegment.id);
+        const position: number = state.selectedSegmentIds.indexOf(currentSegment.id);
         state.selectedSegmentIds.splice(position, 1);
       }
     }
 
     updateCurrentReading();
 
-    const lineCount = state.selectedSegmentIds.length;
+    const lineCount: number = state.selectedSegmentIds.length;
     if (lineCount === 4) {
       setInstructionText('complete');
       playCurrentReading();
@@ -521,7 +521,7 @@ add ${segmentsRemaining} more segments!`;
     return character.y() + (characterHeight / 2);
   }
 
-  let lastFocusedCharacter, lastLine;
+  let lastFocusedCharacter: Konva.Text, lastLine: Konva.Line;
 
   const updateFocusText = (characterText) => {
     focusText.text(characterText.text());
@@ -531,10 +531,10 @@ add ${segmentsRemaining} more segments!`;
   const updateTrace = (characterText) => {
     if (!lastFocusedCharacter) { return }
 
-    const { color, strokeWidth, fadeDuration } = constants.trace;
+    const { color, strokeWidth, fadeDuration } = constants.trace; // check destructuring
 
     // make new line
-    let newLine = new Konva.Line({
+    let newLine: Konva.Line = new Konva.Line({
       points: [
         getCenterX(lastFocusedCharacter),
         getCenterY(lastFocusedCharacter),
@@ -548,8 +548,8 @@ add ${segmentsRemaining} more segments!`;
 
     if (lastLine) {
       // fade last line
-      let oldLine = lastLine;
-      let tween = new Konva.Tween({
+      let oldLine: Konva.Line = lastLine;
+      let tween: Konva.Tween = new Konva.Tween({
         node: oldLine,
         duration: fadeDuration,
         points: [
@@ -580,7 +580,7 @@ add ${segmentsRemaining} more segments!`;
 
     // fade in text
     characterText.opacity(0);
-    let fadeIn = new Konva.Tween({
+    let fadeIn: Konva.Tween = new Konva.Tween({
       node: characterText,
       duration: Math.random() * constants.fadeIn.maxDuration,
       opacity: 1
@@ -599,7 +599,7 @@ add ${segmentsRemaining} more segments!`;
 
 $('.footer').hide();
 
-let data;
+let data: any;
 
 $.when(
   $.ajax({
