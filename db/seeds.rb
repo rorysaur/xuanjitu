@@ -3,7 +3,7 @@ require "csv"
 # seed positions if table is empty
 if !Position.any?
   # prepare color values
-  csv_path = File.join(Rails.root, "db", "data", "colors.csv")
+  csv_path = File.join(Rails.root, "db", "data", "colors-metail.csv")
   CSV::Converters[:symbol] = -> (value) { value.to_sym }
   colors = CSV.parse(File.read(csv_path), headers: true, converters: :symbol)
   color_mappings = {
