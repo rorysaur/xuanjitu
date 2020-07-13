@@ -81,12 +81,12 @@ for (let y = 0; y < characterGrid.length; y++) { // check for loops
 }
 
 const render = ({ characters, segments }) => {
-  let state = {
+  let state: any = {
     highlightedChars: [],
     selectedSegmentIds: [],
   };
 
-  let stage = new Konva.Stage({
+  let stage: Konva.Stage = new Konva.Stage({
     container: 'container',   // id of container <div>
     width: window.innerWidth,
     height: constants.stage.height,
@@ -404,6 +404,7 @@ add ${segmentsRemaining} more segments!`;
     });
   }
 
+  // when a char is moused-over, highlight the chars of all related segments
   const charMouseover = (charText) => {
     segmentsForChar(charText).forEach(segment => {
       segmentEachChar(segment, (charInSegment) => {
@@ -418,6 +419,7 @@ add ${segmentsRemaining} more segments!`;
     layer2.batchDraw();
   }
 
+  // when mouse leaves char, fade the chars of all related segments again
   const charMouseleave = (charText) => {
     state.highlightedChars.forEach(char => {
       if (charIsSelected(char) || char.name().match('rhyme')) {
@@ -432,6 +434,8 @@ add ${segmentsRemaining} more segments!`;
     layer2.batchDraw();
   }
 
+  // when char is clicked, identify the appropriate segment and add it to the
+  // current reading
   const charClick = (charText) => {
     if (charText.name().match('rhyme')) {
       return;
