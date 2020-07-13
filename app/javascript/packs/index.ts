@@ -121,14 +121,20 @@ const render = ({ characters, segments, readings }) => {
     let sidebarX: number = 0;
 
     segmentEachChar(segment, char => {
-      state.demo.highlightedChars.push(char);
+      let isRepeatChar: boolean = false;
 
-      // show char in grid
-      const fadeInGrid: Konva.Tween = new Konva.Tween({
-        node: char,
-        duration: duration,
-        opacity: opacity
-      });
+      // show char in grid unless already shown
+      if (state.demo.highlightedChars.includes(char)) {
+        isRepeatChar = true;
+      } else {
+        state.demo.highlightedChars.push(char);
+
+        const fadeInGrid: Konva.Tween = new Konva.Tween({
+          node: char,
+          duration: duration,
+          opacity: opacity
+        });
+      }
 
       // show char in sidebar
       const sidebarChar: Konva.Text = new Konva.Text({
@@ -155,7 +161,7 @@ const render = ({ characters, segments, readings }) => {
       // set both
       setTimeout(
         () => {
-          fadeInGrid.play();
+          isRepeatChar || fadeInGrid.play();
           fadeInSidebar.play();
 
           // if it's the last char of the last segment, play the next reading
