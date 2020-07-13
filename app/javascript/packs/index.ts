@@ -20,7 +20,7 @@ const render = ({ characters, segments, readings }) => {
 
   let stage: Konva.Stage = new Konva.Stage({
     container: 'container',   // id of container <div>
-    width: window.innerWidth,
+    width: constants.stage.width,
     height: constants.stage.height,
   });
 
