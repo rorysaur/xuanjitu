@@ -121,12 +121,14 @@ if !Reading.any?
       # hard-coding these for now
       interpretation: 0,
       color: "green",
+      block_number: 1,
       number: 1,
     )
     Reading.create!(
       # hard-coding these for now
       interpretation: 0,
       color: "black",
+      block_number: 1,
       number: 1,
     )
   end
@@ -141,6 +143,7 @@ if !ReadingSegmentAssignment.any?
       reading = Reading.find_by!(
         interpretation: 0, # hard-coding for now
         color: row["color"],
+        block_number: row["block_number"],
         number: row["reading_number"],
       )
 

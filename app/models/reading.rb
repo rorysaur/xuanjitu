@@ -13,7 +13,7 @@ class Reading < ActiveRecord::Base
 
   enum interpretation: [:metail, :li_wei]
 
-  validates :number, uniqueness: { scope: :color }
+  validates :number, uniqueness: { scope: [:color, :block_number] }
 
   def lines
     segments.order(:line_number)

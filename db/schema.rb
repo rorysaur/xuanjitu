@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_12_070119) do
+ActiveRecord::Schema.define(version: 2020_07_13_072032) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,7 +58,8 @@ ActiveRecord::Schema.define(version: 2020_07_12_070119) do
     t.integer "interpretation", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["interpretation", "color", "number"], name: "index_readings_on_interpretation_and_color_and_number"
+    t.integer "block_number", null: false
+    t.index ["interpretation", "color", "block_number", "number"], name: "index_readings_on_interpretation_block_and_number"
   end
 
   create_table "segments", force: :cascade do |t|
