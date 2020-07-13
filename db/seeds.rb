@@ -123,6 +123,12 @@ if !Reading.any?
       color: "green",
       number: 1,
     )
+    Reading.create!(
+      # hard-coding these for now
+      interpretation: 0,
+      color: "black",
+      number: 1,
+    )
   end
 end
 
