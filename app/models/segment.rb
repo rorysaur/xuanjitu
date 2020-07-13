@@ -15,6 +15,8 @@ class Segment < ActiveRecord::Base
     yellow: "yellow",
   }
 
+  validates :head_position, uniqueness: {  scope: [:color, :length] }
+
   class << self
     def as_grid_by_tail
       segments = Segment.includes(:head_position, :tail_position).all
