@@ -13,6 +13,8 @@ class Reading < ActiveRecord::Base
 
   enum interpretation: [:metail, :li_wei]
 
+  scope :enabled, -> { where(enabled: true) }
+
   validates :number, uniqueness: { scope: [:color, :block_number] }
 
   def lines

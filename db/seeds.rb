@@ -126,6 +126,7 @@ if !ReadingSegmentAssignment.any?
         color: row["color"],
         block_number: row["block_number"],
         number: row["reading_number"],
+        enabled: row["enabled"],
       )
 
       head_position = Position.find_by!(
