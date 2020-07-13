@@ -115,32 +115,13 @@ else
   puts "#{CharacterSegmentAssignment.count} character_segment_assignments already exist!"
 end
 
-if !Reading.any?
-  ActiveRecord::Base.transaction do
-    Reading.create!(
-      # hard-coding these for now
-      interpretation: 0,
-      color: "green",
-      block_number: 1,
-      number: 1,
-    )
-    Reading.create!(
-      # hard-coding these for now
-      interpretation: 0,
-      color: "black",
-      block_number: 1,
-      number: 1,
-    )
-  end
-end
-
 if !ReadingSegmentAssignment.any?
   reading_segment_assignments_csv_path = File.join(Rails.root, "db", "data", "reading_segment_assignments.csv")
   rows = CSV.parse(File.read(reading_segment_assignments_csv_path), headers: true, converters: :integer)
 
   ActiveRecord::Base.transaction do
     rows.each do |row|
-      reading = Reading.find_by!(
+      reading = Reading.find_or_create_by!(
         interpretation: 0, # hard-coding for now
         color: row["color"],
         block_number: row["block_number"],
