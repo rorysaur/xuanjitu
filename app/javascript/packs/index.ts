@@ -8,8 +8,14 @@ for (let y = 0; y < characterGrid.length; y++) { // check for loops
 
 const render = ({ characters, segments, readings }) => {
   let state: any = {
-    highlightedChars: [],
-    selectedSegmentIds: [],
+    demo: {
+      currentReading: {
+        index: 0,
+        length: 0,
+      },
+      currentSidebarGroup: undefined,
+      highlightedChars: [],
+    }
   };
 
   let stage: Konva.Stage = new Konva.Stage({
@@ -98,22 +104,25 @@ const render = ({ characters, segments, readings }) => {
     return mapped;
   }
 
-  const currentSidebarGroup: Konva.Group = new Konva.Group({
+  state.demo.currentSidebarGroup = new Konva.Group({
     x: gridBackground.width() + constants.readingText.marginLeft,
     y: constants.readingText.y,
   });
 
-  layer2.add(currentSidebarGroup);
+  layer2.add(state.demo.currentSidebarGroup);
 
   const playSegment = (segment, idx) => {
     const { delayPerChar, duration, opacity } = constants.demo.fadeIn;
     const delayOffset: number = segment.length * idx * delayPerChar;
     let delay: number = delayOffset;
+    let charCount: number = 0;
 
     const sidebarY: number = idx * constants.readingText.lineHeight;
     let sidebarX: number = 0;
 
     segmentEachChar(segment, char => {
+      state.demo.highlightedChars.push(char);
+
       // show char in grid
       const fadeInGrid: Konva.Tween = new Konva.Tween({
         node: char,
@@ -133,7 +142,7 @@ const render = ({ characters, segments, readings }) => {
         segmentId: segment.id,
       });
 
-      currentSidebarGroup.add(sidebarChar);
+      state.demo.currentSidebarGroup.add(sidebarChar);
       layer2.batchDraw();
 
       const fadeInSidebar: Konva.Tween = new Konva.Tween({
@@ -142,11 +151,20 @@ const render = ({ characters, segments, readings }) => {
         opacity: opacity,
       });
 
+
       // set both
       setTimeout(
         () => {
           fadeInGrid.play();
           fadeInSidebar.play();
+
+          // if it's the last char of the last segment, play the next reading
+          charCount += 1;
+          const isLastSegment: boolean = (idx + 1) == state.demo.currentReading.length;
+          const isLastChar: boolean = charCount == segment.length;
+          if (isLastSegment && isLastChar) {
+            setTimeout(playNextReading, duration * 1000 * 2);
+          }
         },
         delay
       );
@@ -157,19 +175,42 @@ const render = ({ characters, segments, readings }) => {
     });
   }
 
-  const playReadings = () => {
-    readings.forEach(reading => {
-      // clean up sidebar
-      const oldTexts: any = currentSidebarGroup.getChildren();
-      currentSidebarGroup.removeChildren();
-      oldTexts.each(text => text.destroy());
+  const playReading = (idx) => {
+    if (readings[idx] === undefined) {
+      return;
+    }
 
-      // play reading in grid and sidebar
-      reading.segment_ids.forEach((segmentId, segmentIdx) => {
-        const segment: any = segments[segmentId];
-        playSegment(segment, segmentIdx);
-      });
+    const { currentReading, currentSidebarGroup, highlightedChars } = state.demo;
+    const reading = readings[idx];
+
+    // update state
+    currentReading.idx = idx;
+    currentReading.length = reading.length;
+
+    // clean up grid
+    highlightedChars.forEach(char => {
+      char.setAttrs({ opacity: constants.demo.fadeOut.opacity });
     });
+    state.demo.highlightedChars = [];
+
+    // clean up sidebar
+    const oldTexts: any = currentSidebarGroup.getChildren();
+    currentSidebarGroup.removeChildren();
+    oldTexts.each(text => text.destroy());
+
+    // play reading in grid and sidebar
+    reading.segment_ids.forEach((segmentId, segmentIdx) => {
+      const segment: any = segments[segmentId];
+      playSegment(segment, segmentIdx);
+    });
+  }
+
+  const playNextReading = () => {
+    playReading(state.demo.currentReading.idx + 1);
+  }
+
+  const playReadings = () => {
+    playReading(0);
   }
 
   const playDemo = () => {
