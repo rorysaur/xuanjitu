@@ -6,7 +6,7 @@ for (let y = 0; y < characterGrid.length; y++) { // check for loops
   characterGrid[y] = new Array(29);
 }
 
-const render = ({ characters, segments }) => {
+const render = ({ characters, segments, readings }) => {
   let state: any = {
     highlightedChars: [],
     selectedSegmentIds: [],
@@ -49,9 +49,6 @@ const render = ({ characters, segments }) => {
     return newText;
   });
 
-  let characterWidth: number = characterTexts[0].width();
-  let characterHeight: number = characterTexts[0].height();
-
   let gridBackground: Konva.Rect = new Konva.Rect({
     x: 0,
     y: 0,
@@ -62,139 +59,6 @@ const render = ({ characters, segments }) => {
   });
   layer0.add(gridBackground);
 
-  let focusText: Konva.Text = new Konva.Text({
-    x: gridBackground.width() + constants.focusText.marginLeft,
-    y: constants.focusText.y,
-    text: '',
-    fontFamily: 'Ma Shan Zheng',
-    fontSize: constants.focusText.fontSize,
-  });
-  layer2.add(focusText);
-
-  let startButtonRed: Konva.Label = new Konva.Label({
-    x: gridBackground.width() + constants.buttons.marginLeft,
-    y: constants.buttons.y,
-  });
-
-  startButtonRed.add(
-    new Konva.Tag({
-      fill: 'red'
-    })
-  );
-
-  startButtonRed.add(
-    new Konva.Text({
-      text: 'start',
-      fontFamily: 'Roboto Mono',
-      fontSize: 18,
-      padding: 5,
-      fill: 'white'
-    })
-  );
-
-  const startButtonRedClick = () => {
-    let fadeOutGridBackground = new Konva.Tween({
-      node: gridBackground,
-      duration: 1,
-      opacity: 0,
-    });
-
-    fadeOutGridBackground.play();
-
-    characterTexts.forEach((char) => {
-      let x: number = char.x();
-      let y: number = char.y();
-      let size: number = char.fontSize();
-      let opacity: number = 0;
-      let fill: string = char.fill();
-
-      // set fade-out attrs
-      if (char.fill() === 'red') {
-        if (char.name().match('rhyme')) {
-          opacity = constants.characterStates.highlighted.opacity;
-          fill = constants.characterStates.highlighted.fill;
-        } else {
-          opacity = constants.characterStates.faded.opacity;
-          fill = constants.characterStates.faded.fill;
-        }
-      }
-
-      // bind events
-      if (char.fill() === 'red') {
-        char.on('mouseover', charMouseover.bind(this, char));
-        char.on('mouseleave', charMouseleave.bind(this, char));
-        char.on('click tap', charClick.bind(this, char));
-      }
-
-      let fadeOut: Konva.Tween = new Konva.Tween({
-        node: char,
-        duration: 1,
-        opacity: opacity,
-        fill: fill,
-        fontSize: size,
-        x: x,
-        y: y,
-      });
-
-      fadeOut.play();
-    });
-
-    startButtonRed.destroy();
-
-    setInstructionText('unselected');
-  }
-
-  layer2.add(startButtonRed);
-  startButtonRed.on('click tap', startButtonRedClick);
-
-  let resetButton: Konva.Text = new Konva.Text({
-    x: startButtonRed.x() + 70,
-    y: constants.buttons.y,
-    text: 'reset',
-    fontFamily: 'Roboto Mono',
-    fontSize: 18,
-    padding: 5,
-    fill: 'red',
-  });
-
-  const resetButtonClick = () => {
-    stage.destroy();
-    render(data);
-  }
-
-  layer2.add(resetButton);
-  resetButton.on('click tap', resetButtonClick);
-
-  const instructionText: Konva.Text = new Konva.Text({
-    x: gridBackground.width() + constants.instructionText.marginLeft,
-    y: constants.instructionText.y,
-    text: 'hi there!',
-    fontFamily: 'Roboto Mono',
-    fontSize: 14,
-    fill: 'black',
-    width: 200,
-  });
-  layer2.add(instructionText);
-
-  const setInstructionText = readingState => {
-    const segmentsRemaining: number = 4 - state.selectedSegmentIds.length;
-    let text: string;
-
-    if (readingState === 'unselected') {
-      text = `click on a segment to add it to your reading.\n\n\
-words in light red are rhyme words.\n\n\
-add ${segmentsRemaining} more segments!`;
-    } else if (readingState === 'selected') {
-      text = `you can click on a segment again to reverse it.\
-(this also changes the rhyme word.)\n\n\
-you can click once more to unselect the segment.\n\n\
-add ${segmentsRemaining} more segments!`;
-    } else if (readingState === 'complete') {
-      text = `you have a complete 4-line poem!`;
-    }
-
-    instructionText.text(text);
-  }
 
   const segmentsForChar = (charText) => {
     const segmentIds: string[] = charText.getAttr('segmentIds'); // check ?
@@ -234,12 +98,6 @@ add ${segmentsRemaining} more segments!`;
     return mapped;
   }
 
-  const currentReading: Konva.Group = new Konva.Group({
-    x: gridBackground.width() + constants.readingText.marginLeft,
-    y: constants.readingText.y,
-  });
-  layer2.add(currentReading);
-
   const textForSegment = (segment, index) => {
     const text: string = segmentEachChar(segment, char => char.text()).join('');
 
@@ -254,10 +112,6 @@ add ${segmentsRemaining} more segments!`;
     });
   }
 
-  const charIsSelected = (charText) => {
-    return (charText.getAttr('characterState') === 'selected');
-  }
-
   const resetCharacterState = (charText) => {
     let characterState: string;
     if (charText.name().match('rhyme')) {
@@ -269,240 +123,47 @@ add ${segmentsRemaining} more segments!`;
     charText.setAttrs(constants.characterStates[characterState]);
   }
 
+  const playSegment = (segment, idx) => {
+    const { delayPerChar, duration, opacity } = constants.demo.fadeIn;
+    const delayOffset: number = segment.length * idx * delayPerChar;
+    let delay: number = delayOffset;
 
-  const updateCurrentReading = () => {
-    // destroy old text objects
-    const oldTexts: any = currentReading.getChildren();
-    currentReading.removeChildren();
-    oldTexts.each(text => text.destroy());
+    segmentEachChar(segment, char => {
+      const fadeIn: Konva.Tween = new Konva.Tween({
+        node: char,
+        duration: duration,
+        opacity: opacity
+      });
+      setTimeout(() => fadeIn.play(), delay);
 
-    // create new text objects
-    const selectedSegments: any[] = state.selectedSegmentIds.map(segmentId => segments[segmentId]);
-
-    selectedSegments.forEach((segment, index) => {
-      const textObject: Konva.Text = textForSegment(segment, index);
-      currentReading.add(textObject);
+      delay += delayPerChar;
     });
-
-    layer2.batchDraw();
   }
 
-  const playCurrentReading = () => {
-    // destroy old text objects
-    const oldTexts: any = currentReading.getChildren();
-    currentReading.removeChildren();
-    oldTexts.each(text => text.destroy());
-
-    // create new text objects
-    const selectedSegments: any[] = state.selectedSegmentIds.map(segmentId => segments[segmentId]);
-
-    let delay: number = 0;
-
-    selectedSegments.forEach((segment, index) => {
-      const y: number = index * constants.readingText.lineHeight;
-      let x: number = 0;
-
-      segmentEachChar(segment, char => {
-        const charText: Konva.Text = new Konva.Text({
-          x: x,
-          y: y,
-          text: char.text(),
-          fontFamily: 'Ma Shan Zheng',
-          fontSize: constants.readingText.fontSize,
-          fill: 'red',
-          opacity: 0,
-          segmentId: segment.id,
-        });
-
-        currentReading.add(charText);
-        layer2.batchDraw();
-
-        const fadeIn: Konva.Tween = new Konva.Tween({
-          node: charText,
-          duration: 0.5,
-          opacity: 1,
-        });
-        setTimeout(() => fadeIn.play(), delay);
-
-        x += charText.width();
-        delay += 200;
+  const playReadings = () => {
+    readings.forEach(reading => {
+      reading.segment_ids.forEach((segmentId, segmentIdx) => {
+        const segment: any = segments[segmentId];
+        playSegment(segment, segmentIdx);
       });
     });
   }
 
-  // when a char is moused-over, highlight the chars of all related segments
-  const charMouseover = (charText) => {
-    segmentsForChar(charText).forEach(segment => {
-      segmentEachChar(segment, (charInSegment) => {
-        if (charIsSelected(charInSegment)) {
-          return;
-        }
-        charInSegment.setAttrs(constants.characterStates.highlighted);
-        state.highlightedChars.push(charInSegment);
+  const playDemo = () => {
+    const { duration, opacity } = constants.demo.fadeOut;
+
+    // fade out all characters
+    characterTexts.forEach(characterText => {
+      const fadeOut: Konva.Tween = new Konva.Tween({
+        node: characterText,
+        duration: duration,
+        opacity: opacity
       });
+
+      fadeOut.play();
     });
 
-    layer2.batchDraw();
-  }
-
-  // when mouse leaves char, fade the chars of all related segments again
-  const charMouseleave = (charText) => {
-    state.highlightedChars.forEach(char => {
-      if (charIsSelected(char) || char.name().match('rhyme')) {
-        return;
-      }
-
-      char.setAttrs(constants.characterStates.faded);
-    });
-
-    state.highlightedChars = [];
-
-    layer2.batchDraw();
-  }
-
-  // when char is clicked, identify the appropriate segment and add it to the
-  // current reading
-  const charClick = (charText) => {
-    if (charText.name().match('rhyme')) {
-      return;
-    }
-
-    const possibleSegments: any[] = segmentsForChar(charText);
-    if (possibleSegments.length === 0) {
-      return;
-    }
-
-    // if no segment selected: select the first one
-    if (!charIsSelected(charText)) {
-      if (state.selectedSegmentIds.length === 4) {
-        return;
-      }
-
-      const segment: any = possibleSegments[0];
-
-      state.selectedSegmentIds.push(segment.id);
-
-      segmentEachChar(segment, (charInSegment) => {
-        charInSegment.setAttrs(constants.characterStates.selected);
-      });
-    } else {
-      // else: a segment is selected
-      // which of the char's segments is selected?
-      const currentSegmentIndex: number = possibleSegments.findIndex(segment => {
-        return state.selectedSegmentIds.includes(segment.id);
-      });
-
-      const currentSegment: any = possibleSegments[currentSegmentIndex];
-
-      // either way, clear current segment
-      segmentEachChar(currentSegment, (charInSegment) => {
-        const otherSelectedSegmentForChar: any = segmentsForChar(charInSegment).find(segment => {
-          const isAnotherSegment: boolean = (segment.id !== currentSegment.id);
-          const isSelected: boolean = state.selectedSegmentIds.includes(segment.id);
-
-          return isAnotherSegment && isSelected;
-        });
-
-        const safeToReset: boolean = (otherSelectedSegmentForChar === undefined);
-
-        if (!safeToReset) {
-          return;
-        }
-
-        resetCharacterState(charInSegment);
-      });
-
-      // in case the first is selected, advance to the second segment
-      if (currentSegmentIndex === 0) {
-        const nextSegment: any = possibleSegments[1];
-
-        const position: number = state.selectedSegmentIds.indexOf(currentSegment.id);
-        state.selectedSegmentIds[position] = nextSegment.id;
-
-        segmentEachChar(nextSegment, (charInSegment) => {
-          charInSegment.setAttrs(constants.characterStates.selected);
-        });
-      } else if (currentSegmentIndex === 1) {
-        // in case the second is selected, unselect it
-        const position: number = state.selectedSegmentIds.indexOf(currentSegment.id);
-        state.selectedSegmentIds.splice(position, 1);
-      }
-    }
-
-    updateCurrentReading();
-
-    const lineCount: number = state.selectedSegmentIds.length;
-    if (lineCount === 4) {
-      setInstructionText('complete');
-      playCurrentReading();
-    } else if (lineCount === 0) {
-      setInstructionText('unselected');
-    } else {
-      setInstructionText('selected');
-    }
-
-    layer2.batchDraw();
-  }
-
-  const getCenterX = (character) => {
-    return character.x() + (characterWidth / 2);
-  }
-  const getCenterY = (character) => {
-    return character.y() + (characterHeight / 2);
-  }
-
-  let lastFocusedCharacter: Konva.Text, lastLine: Konva.Line;
-
-  const updateFocusText = (characterText) => {
-    focusText.text(characterText.text());
-    focusText.fill(characterText.fill());
-  }
-
-  const updateTrace = (characterText) => {
-    if (!lastFocusedCharacter) { return }
-
-    const { color, strokeWidth, fadeDuration } = constants.trace; // check destructuring
-
-    // make new line
-    let newLine: Konva.Line = new Konva.Line({
-      points: [
-        getCenterX(lastFocusedCharacter),
-        getCenterY(lastFocusedCharacter),
-        getCenterX(characterText),
-        getCenterY(characterText)
-      ],
-      stroke: color,
-      strokeWidth: strokeWidth,
-    });
-    layer2.add(newLine);
-
-    if (lastLine) {
-      // fade last line
-      let oldLine: Konva.Line = lastLine;
-      let tween: Konva.Tween = new Konva.Tween({
-        node: oldLine,
-        duration: fadeDuration,
-        points: [
-          oldLine.points()[2],
-          oldLine.points()[3],
-          oldLine.points()[2],
-          oldLine.points()[3]
-        ],
-        onFinish: () => { oldLine.destroy() }
-      });
-
-      tween.play();
-    }
-
-    lastLine = newLine;
-  }
-
-  const characterTextMouseover = (characterText) => {
-    // updateFocusText(characterText);
-    // updateTrace(characterText);
-    layer2.draw();
-
-    lastFocusedCharacter = characterText;
+    setTimeout(playReadings, duration * 1000);
   }
 
   characterTexts.forEach((characterText) => {
@@ -517,7 +178,6 @@ add ${segmentsRemaining} more segments!`;
     });
     fadeIn.play();
 
-    characterText.on('mouseover', characterTextMouseover.bind(this, characterText));
   });
 
   layers.forEach(layer => {
@@ -525,6 +185,7 @@ add ${segmentsRemaining} more segments!`;
     layer.draw();
   });
 
+  setTimeout(playDemo, constants.fadeIn.maxDuration * 1000);
 }
 
 $('.footer').hide();
@@ -545,7 +206,7 @@ $.when(
   data = {
     characters: charactersResponse[0]["characters"],
     segments: segmentsResponse[0]["segments"],
-    readings: segmentsResponse[0]["readings"]
+    readings: readingsResponse[0]["readings"]
   };
   render(data);
   // $('.footer').show();
