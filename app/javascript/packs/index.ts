@@ -98,50 +98,73 @@ const render = ({ characters, segments, readings }) => {
     return mapped;
   }
 
-  const textForSegment = (segment, index) => {
-    const text: string = segmentEachChar(segment, char => char.text()).join('');
+  const currentSidebarGroup: Konva.Group = new Konva.Group({
+    x: gridBackground.width() + constants.readingText.marginLeft,
+    y: constants.readingText.y,
+  });
 
-    return new Konva.Text({
-      x: 0,
-      y: index * constants.readingText.lineHeight,
-      text: text,
-      fontFamily: 'Ma Shan Zheng',
-      fontSize: constants.readingText.fontSize,
-      fill: 'red',
-      segmentId: segment.id,
-    });
-  }
-
-  const resetCharacterState = (charText) => {
-    let characterState: string;
-    if (charText.name().match('rhyme')) {
-      characterState = 'highlighted';
-    } else {
-      characterState = 'faded';
-    }
-
-    charText.setAttrs(constants.characterStates[characterState]);
-  }
+  layer2.add(currentSidebarGroup);
 
   const playSegment = (segment, idx) => {
     const { delayPerChar, duration, opacity } = constants.demo.fadeIn;
     const delayOffset: number = segment.length * idx * delayPerChar;
     let delay: number = delayOffset;
 
+    const sidebarY: number = idx * constants.readingText.lineHeight;
+    let sidebarX: number = 0;
+
     segmentEachChar(segment, char => {
-      const fadeIn: Konva.Tween = new Konva.Tween({
+      // show char in grid
+      const fadeInGrid: Konva.Tween = new Konva.Tween({
         node: char,
         duration: duration,
         opacity: opacity
       });
-      setTimeout(() => fadeIn.play(), delay);
 
+      // show char in sidebar
+      const sidebarChar: Konva.Text = new Konva.Text({
+        x: sidebarX,
+        y: sidebarY,
+        text: char.text(),
+        fontFamily: constants.readingText.fontFamily,
+        fontSize: constants.readingText.fontSize,
+        fill: segment.color,
+        opacity: 0,
+        segmentId: segment.id,
+      });
+
+      currentSidebarGroup.add(sidebarChar);
+      layer2.batchDraw();
+
+      const fadeInSidebar: Konva.Tween = new Konva.Tween({
+        node: sidebarChar,
+        duration: duration,
+        opacity: opacity,
+      });
+
+      // set both
+      setTimeout(
+        () => {
+          fadeInGrid.play();
+          fadeInSidebar.play();
+        },
+        delay
+      );
+
+      // update variables
+      sidebarX += sidebarChar.width();
       delay += delayPerChar;
     });
   }
 
   const playReadings = () => {
     readings.forEach(reading => {
+      // clean up sidebar
+      const oldTexts: any = currentSidebarGroup.getChildren();
+      currentSidebarGroup.removeChildren();
+      oldTexts.each(text => text.destroy());
+
+      // play reading in grid and sidebar
       reading.segment_ids.forEach((segmentId, segmentIdx) => {
         const segment: any = segments[segmentId];
         playSegment(segment, segmentIdx);

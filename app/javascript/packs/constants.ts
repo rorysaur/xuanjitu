@@ -41,7 +41,7 @@ const constants = {
   },
   demo: {
     fadeIn: {
-      delayPerChar: 300,
+      delayPerChar: 500,
       duration: 0.5,
       opacity: 1
     },
@@ -64,12 +64,13 @@ const constants = {
   // },
   readingText: {
     lineHeight: 45,
-    marginLeft: 20,
+    marginLeft: 60,
+    fontFamily: 'Ma Shan Zheng',
     fontSize: 30,
-    y: 300,
+    y: 100,
   },
   stage: {
-    height: 750,
+    height: 1200,
   },
   text: {
     offset: {
