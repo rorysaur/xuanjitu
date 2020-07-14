@@ -122,6 +122,7 @@ const render = ({ characters, segments, readings }) => {
 
     segmentEachChar(segment, char => {
       let isRepeatChar: boolean = false;
+      let fadeInGrid;
 
       // show char in grid unless already shown
       if (state.demo.highlightedChars.includes(char)) {
@@ -129,7 +130,7 @@ const render = ({ characters, segments, readings }) => {
       } else {
         state.demo.highlightedChars.push(char);
 
-        const fadeInGrid: Konva.Tween = new Konva.Tween({
+        fadeInGrid = new Konva.Tween({
           node: char,
           duration: duration,
           opacity: opacity
