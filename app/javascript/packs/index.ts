@@ -183,7 +183,7 @@ const render = ({ characters, segments, readings }) => {
 
   const playReading = (idx) => {
     if (readings[idx] === undefined) {
-      return;
+      playReadings();
     }
 
     const { currentReading, currentSidebarGroup, highlightedChars } = state.demo;
