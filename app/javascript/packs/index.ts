@@ -143,7 +143,7 @@ const render = ({ characters, segments, readings }) => {
         text: char.text(),
         fontFamily: constants.readingText.fontFamily,
         fontSize: constants.readingText.fontSize,
-        fill: segment.color,
+        fill: constants.characters.colorMappings[segment.color],
         opacity: 0,
         segmentId: segment.id,
       });
