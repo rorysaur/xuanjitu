@@ -1,5 +1,5 @@
 class ReadingsController < ApplicationController
   def index
-    @readings = Reading.includes(:segments).enabled
+    @readings = Reading.in_demo_order
   end
 end
