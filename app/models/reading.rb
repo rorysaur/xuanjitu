@@ -21,18 +21,20 @@ class Reading < ActiveRecord::Base
     def in_demo_order
       enabled_readings = includes(:segments).enabled
 
-      green_readings = enabled_readings.color(:green)
-      black_readings = enabled_readings.color(:black)
-      yellow_readings = enabled_readings.color(:yellow)
-      purple_readings = enabled_readings.color(:purple)
+      green_readings = enabled_readings.color(:green).to_a
+      black_readings = enabled_readings.color(:black).to_a
+      yellow_readings = enabled_readings.color(:yellow).to_a
+      purple_readings = enabled_readings.color(:purple).to_a
 
       outer_readings = green_readings.zip(black_readings).flatten.compact
+
+      final_readings = [yellow_readings.pop, purple_readings.pop]
 
       inner_readings =
         purple_readings.
         zip(yellow_readings).
-        push(yellow_readings.last).
         flatten.
+        concat(final_readings).
         compact
 
       outer_readings + inner_readings
