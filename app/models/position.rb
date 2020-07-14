@@ -28,6 +28,13 @@ class Position < ActiveRecord::Base
     end
   end
 
+  def adjacent_positions
+    Position.where(
+      x_coordinate: (x_coordinate - 1)..(x_coordinate + 1),
+      y_coordinate: (y_coordinate - 1)..(y_coordinate + 1),
+    )
+  end
+
   def between?(pos_a, pos_b)
     start_pos, end_pos = Position.sort(pos_a, pos_b)
 

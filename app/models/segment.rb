@@ -35,6 +35,22 @@ class Segment < ActiveRecord::Base
     end
   end
 
+  def following_segments
+    # segments of the same color whose head position is adjacent to self's tail position
+    candidate_segments = Segment.where(
+      color: color,
+      length: length,
+    )
+
+    adjacent_positions = tail_position.adjacent_positions
+
+    # exclude segments that overlap with self
+    candidate_segments.select do |candidate_segment|
+      candidate_segment.head_position.in?(adjacent_positions) &&
+        !candidate_segment.head_position.in?(characters.map(&:position))
+    end
+  end
+
   def head_x
     head_position.x_coordinate
   end
