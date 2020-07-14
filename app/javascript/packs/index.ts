@@ -182,10 +182,6 @@ const render = ({ characters, segments, readings }) => {
   }
 
   const playReading = (idx) => {
-    if (readings[idx] === undefined) {
-      playReadings();
-    }
-
     const { currentReading, currentSidebarGroup, highlightedChars } = state.demo;
     const reading = readings[idx];
 
@@ -212,7 +208,13 @@ const render = ({ characters, segments, readings }) => {
   }
 
   const playNextReading = () => {
-    playReading(state.demo.currentReading.idx + 1);
+    const nextIdx: number = state.demo.currentReading.idx + 1;
+
+    if (readings[nextIdx] === undefined) {
+      playReading(0);
+    } else {
+      playReading(state.demo.currentReading.idx + 1);
+    }
   }
 
   const playReadings = () => {
