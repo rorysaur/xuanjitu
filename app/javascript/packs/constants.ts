@@ -3,6 +3,7 @@ const constants = {
     width: 750,
     height: 750,
     color: '#eee',
+    strokeWidth: 5
   },
   // buttons: {
   //   marginLeft: 20,
@@ -20,6 +21,7 @@ const constants = {
       yellow: '#fc0',
     },
     fontSize: 20,
+    fontFamily: 'Ma Shan Zheng',
     strokeWidth: 1,
   },
   characterStates: {
