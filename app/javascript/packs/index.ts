@@ -45,77 +45,75 @@ interface State {
 
 // end type declarations
 
-
 // pure functions
 
 const createCharacterGrid = (): Konva.Text[][] => {
-  let characterGrid: Konva.Text[][] = new Array(29);
-  for (let y = 0; y < characterGrid.length; y++) { // check for loops
+  const characterGrid: Konva.Text[][] = new Array(29);
+  for (let y = 0; y < characterGrid.length; y += 1) { // check for loops
     characterGrid[y] = new Array(29);
   }
   return characterGrid;
-}
+};
 
 const createCharacterText = (character: CharacterData): Konva.Text => {
   const { width, height, colorMappings, fontSize, fontFamily, strokeWidth } = constants.characters; // check destructuring
   const { offset } = constants.text;
 
   return new Konva.Text({
+    fontFamily,
+    fontSize,
+    strokeWidth,
+    character,
     x: (character.x_coordinate * width) + offset.x,
     y: (character.y_coordinate * height) + offset.y,
     text: character.text,
-    fontFamily: fontFamily,
-    fontSize: fontSize,
     fill: colorMappings[character.color],
-    strokeWidth: strokeWidth,
-    character: character,
   });
-}
+};
 
 const createFadeInTween = (node: Konva.Text): Konva.Tween => {
   const { duration, opacity } = constants.demo.fadeIn;
 
   return new Konva.Tween({
-    node: node,
-    duration: duration,
-    opacity: opacity
+    node,
+    duration,
+    opacity,
   });
-}
+};
 
 const createGridBackground = (): Konva.Rect => {
   const { color, width, height, strokeWidth } = constants.background;
 
   return new Konva.Rect({
+    width,
+    height,
+    strokeWidth,
     x: 0,
     y: 0,
-    strokeWidth: strokeWidth,
     fill: color,
-    width: width,
-    height: height,
   });
-}
+};
 
 const createLayers = (): Konva.Layer[] => {
   return [new Konva.Layer(), new Konva.Layer()];
-}
+};
 
 const createSidebarGroup = (offsetX: number): Konva.Group => {
   const { marginLeft, y } = constants.readingText;
 
   return new Konva.Group({
-    x: offsetX + constants.readingText.marginLeft,
-    y: constants.readingText.y,
+    y,
+    x: offsetX + marginLeft,
   });
-}
-
+};
 
 const createStage = (): Konva.Stage => {
   return new Konva.Stage({
-    container: 'container',   // id of container <div>
+    container: 'container', // id of container <div>
     width: constants.stage.width,
     height: constants.stage.height,
   });
-}
+};
 
 const createState = (): State => {
   return {
@@ -126,9 +124,9 @@ const createState = (): State => {
       },
       currentSidebarGroup: undefined,
       highlightedChars: [],
-    }
+    },
   };
-}
+};
 
 const getCharsInSegment = (segment: SegmentData, grid: Konva.Text[][]): Konva.Text[] => {
   const { head_x, tail_x, head_y, tail_y } = segment;
@@ -137,7 +135,7 @@ const getCharsInSegment = (segment: SegmentData, grid: Konva.Text[][]): Konva.Te
 
   const getCharAtCoordinates = (x: number, y: number): Konva.Text => {
     return grid[y][x];
-  }
+  };
 
   if (head_x === tail_x) {
     // vertical segment
@@ -147,7 +145,6 @@ const getCharsInSegment = (segment: SegmentData, grid: Konva.Text[][]): Konva.Te
       y += (head_y < tail_y) ? 1 : -1;
     }
     chars.push(getCharAtCoordinates(tail_x, tail_y));
-
   } else if (head_y === tail_y) {
     // horizontal segment
     let x: number = head_x;
@@ -161,7 +158,7 @@ const getCharsInSegment = (segment: SegmentData, grid: Konva.Text[][]): Konva.Te
   }
 
   return chars;
-}
+};
 
 // end pure functions
 
@@ -186,7 +183,7 @@ const render = ({ characters, segments, readings }) => { // todo types
   layers[1].add(state.demo.currentSidebarGroup);
 
   const playSegment = (segment: SegmentData, idx: number) => {
-    const { delayPerChar, duration, opacity } = constants.demo.fadeIn;
+    const { delayPerChar, duration } = constants.demo.fadeIn;
     const delayOffset: number = segment.length * idx * delayPerChar;
     let delay: number = delayOffset;
     let charCount: number = 0;
@@ -229,25 +226,25 @@ const render = ({ characters, segments, readings }) => { // todo types
       // set both
       setTimeout(
         () => {
-          isRepeatChar || fadeInGrid.play();
+          if (!isRepeatChar) { fadeInGrid.play(); }
           fadeInSidebar.play();
 
           // if it's the last char of the last segment, play the next reading
           charCount += 1;
-          const isLastSegment: boolean = (idx + 1) == state.demo.currentReading.length;
-          const isLastChar: boolean = charCount == segment.length;
+          const isLastSegment: boolean = (idx + 1) === state.demo.currentReading.length;
+          const isLastChar: boolean = charCount === segment.length;
           if (isLastSegment && isLastChar) {
             setTimeout(playNextReading, duration * 1000 * 2);
           }
         },
-        delay
+        delay,
       );
 
       // update variables
       sidebarX += sidebarChar.width();
       delay += delayPerChar;
     });
-  }
+  };
 
   const playReading = (idx: number) => {
     const { currentReading, currentSidebarGroup, highlightedChars } = state.demo;
@@ -266,14 +263,14 @@ const render = ({ characters, segments, readings }) => { // todo types
     // clean up sidebar
     const oldTexts: any = currentSidebarGroup.getChildren();
     currentSidebarGroup.removeChildren();
-    oldTexts.each(text => text.destroy());
+    oldTexts.each(text => { text.destroy(); });
 
     // play reading in grid and sidebar
     reading.segment_ids.forEach((segmentId: number, segmentIdx: number) => {
       const segment: SegmentData = segments[segmentId];
       playSegment(segment, segmentIdx);
     });
-  }
+  };
 
   const playNextReading = () => {
     const nextIdx: number = state.demo.currentReading.index + 1;
@@ -283,11 +280,11 @@ const render = ({ characters, segments, readings }) => { // todo types
     } else {
       playReading(state.demo.currentReading.index + 1);
     }
-  }
+  };
 
   const playReadings = () => {
     playReading(0);
-  }
+  };
 
   const playDemo = () => {
     const { duration, opacity } = constants.demo.fadeOut;
@@ -295,33 +292,33 @@ const render = ({ characters, segments, readings }) => { // todo types
     // fade out all characters
     characterTexts.forEach(characterText => {
       const fadeOut: Konva.Tween = new Konva.Tween({
+        duration,
+        opacity,
         node: characterText,
-        duration: duration,
-        opacity: opacity
       });
 
       fadeOut.play();
     });
 
     setTimeout(playReadings, duration * 1000);
-  }
+  };
 
   const initializeChars = () => {
-    characterTexts.forEach((characterText) => {
+    characterTexts.forEach(characterText => {
       layers[1].add(characterText);
 
       // fade in text
       characterText.opacity(0);
 
-      let fadeIn: Konva.Tween = new Konva.Tween({
+      const fadeIn: Konva.Tween = new Konva.Tween({
         node: characterText,
         duration: Math.random() * constants.fadeIn.maxDuration,
-        opacity: 1
+        opacity: 1,
       });
 
       fadeIn.play();
     });
-  }
+  };
 
   layers.forEach(layer => {
     stage.add(layer);
@@ -331,7 +328,7 @@ const render = ({ characters, segments, readings }) => { // todo types
   initializeChars();
 
   setTimeout(playDemo, constants.fadeIn.maxDuration * 1000);
-}
+};
 
 $('.footer').hide();
 
@@ -339,19 +336,19 @@ let data: any;
 
 $.when(
   $.ajax({
-    url: '/characters.json'
+    url: '/characters.json',
   }),
   $.ajax({
-    url: '/segments.json'
+    url: '/segments.json',
   }),
   $.ajax({
-    url: '/readings.json'
+    url: '/readings.json',
   })
 ).then((charactersResponse, segmentsResponse, readingsResponse) => {
   data = {
-    characters: charactersResponse[0]["characters"],
-    segments: segmentsResponse[0]["segments"],
-    readings: readingsResponse[0]["readings"]
+    characters: charactersResponse[0]['characters'],
+    segments: segmentsResponse[0]['segments'],
+    readings: readingsResponse[0]['readings'],
   };
   render(data);
   // $('.footer').show();
