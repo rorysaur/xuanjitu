@@ -287,4 +287,4 @@ const render = ({ characters, segments, readings }) => { // todo types
   setTimeout(playDemo, constants.fadeIn.maxDuration * 1000);
 };
 
-export { render };
+export { createCharacterGrid, getCharsInSegment, render };
