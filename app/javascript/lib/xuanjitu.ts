@@ -1,20 +1,22 @@
 import Konva from 'konva';
 import constants from './constants';
-import { CharacterData, ReadingData, SegmentData, State } from './interfaces';
+import { CharacterData, ReadingData, SegmentData, SegmentsData, State } from './interfaces';
 
 // pure functions
 
 const createCharacterGrid = (): Konva.Text[][] => {
   const characterGrid: Konva.Text[][] = new Array(29);
-  for (let y = 0; y < characterGrid.length; y += 1) { // check for loops
+  for (let y: number = 0; y < characterGrid.length; y += 1) {
     characterGrid[y] = new Array(29);
   }
   return characterGrid;
 };
 
 const createCharacterText = (character: CharacterData): Konva.Text => {
-  const { width, height, colorMappings, fontSize, fontFamily, strokeWidth } = constants.characters; // check destructuring
-  const { offset } = constants.text;
+  const { width, height, colorMappings, fontSize, fontFamily, strokeWidth }:
+    { width: number, height: number, colorMappings: object, fontSize: number, fontFamily: string, strokeWidth: number }
+    = constants.characters;
+  const { offset }: { offset: any } = constants.text;
 
   return new Konva.Text({
     fontFamily,
@@ -29,7 +31,7 @@ const createCharacterText = (character: CharacterData): Konva.Text => {
 };
 
 const createFadeInTween = (node: Konva.Text): Konva.Tween => {
-  const { duration, opacity } = constants.demo.fadeIn;
+  const { duration, opacity }: { duration: number, opacity: number } = constants.demo.fadeIn;
 
   return new Konva.Tween({
     node,
@@ -39,7 +41,9 @@ const createFadeInTween = (node: Konva.Text): Konva.Tween => {
 };
 
 const createGridBackground = (): Konva.Rect => {
-  const { color, width, height, strokeWidth } = constants.background;
+  const { color, width, height, strokeWidth }:
+    { color: string, width: number, height: number, strokeWidth: number }
+    = constants.background;
 
   return new Konva.Rect({
     width,
@@ -56,7 +60,7 @@ const createLayers = (): Konva.Layer[] => {
 };
 
 const createSidebarGroup = (offsetX: number): Konva.Group => {
-  const { marginLeft, y } = constants.readingText;
+  const { marginLeft, y }: { marginLeft: number, y: number } = constants.readingText;
 
   return new Konva.Group({
     y,
@@ -86,7 +90,9 @@ const createState = (): State => {
 };
 
 const getCharsInSegment = (segment: SegmentData, grid: Konva.Text[][]): Konva.Text[] => {
-  const { head_x, tail_x, head_y, tail_y } = segment;
+  const { head_x, tail_x, head_y, tail_y }:
+    { head_x: number, tail_x: number, head_y: number, tail_y: number }
+    = segment;
 
   const chars: Konva.Text[] = [];
 
@@ -119,7 +125,7 @@ const getCharsInSegment = (segment: SegmentData, grid: Konva.Text[][]): Konva.Te
 
 // end pure functions
 
-const render = ({ characters, segments, readings }) => { // todo types
+const render = ({ characters, segments, readings }: { characters: CharacterData[], segments: SegmentsData, readings: ReadingData[] }) => {
   const state: State = createState();
   const characterGrid: Konva.Text[][] = createCharacterGrid();
   const stage: Konva.Stage = createStage();
@@ -127,7 +133,7 @@ const render = ({ characters, segments, readings }) => { // todo types
 
   // set character Text objects to the grid
   const characterTexts: Konva.Text[] = characters.map((character: CharacterData): Konva.Text => {
-    const newText = createCharacterText(character);
+    const newText: Konva.Text = createCharacterText(character);
     characterGrid[character.y_coordinate][character.x_coordinate] = newText;
 
     return newText;
@@ -140,7 +146,7 @@ const render = ({ characters, segments, readings }) => { // todo types
   layers[1].add(state.demo.currentSidebarGroup);
 
   const playSegment = (segment: SegmentData, idx: number) => {
-    const { delayPerChar, duration } = constants.demo.fadeIn;
+    const { delayPerChar, duration }: { delayPerChar: number, duration: number } = constants.demo.fadeIn;
     const delayOffset: number = segment.length * idx * delayPerChar;
     let delay: number = delayOffset;
     let charCount: number = 0;
@@ -153,7 +159,7 @@ const render = ({ characters, segments, readings }) => { // todo types
 
     chars.forEach((char: Konva.Text) => {
       let isRepeatChar: boolean = false;
-      let fadeInGrid;
+      let fadeInGrid: Konva.Tween;
 
       // show char in grid unless already shown
       if (state.demo.highlightedChars.includes(char)) {
@@ -204,7 +210,9 @@ const render = ({ characters, segments, readings }) => { // todo types
   };
 
   const playReading = (idx: number) => {
-    const { currentReading, currentSidebarGroup, highlightedChars } = state.demo;
+    const { currentReading, currentSidebarGroup, highlightedChars }:
+      { currentReading: any, currentSidebarGroup: Konva.Group, highlightedChars: Konva.Text[] }
+      = state.demo;
     const reading: ReadingData = readings[idx];
 
     // update state
@@ -229,7 +237,7 @@ const render = ({ characters, segments, readings }) => { // todo types
     });
   };
 
-  const playNextReading = () => {
+  const playNextReading = (): void => {
     const nextIdx: number = state.demo.currentReading.index + 1;
 
     if (readings[nextIdx] === undefined) {
@@ -239,12 +247,12 @@ const render = ({ characters, segments, readings }) => { // todo types
     }
   };
 
-  const playReadings = () => {
+  const playReadings = (): void => {
     playReading(0);
   };
 
   const playDemo = () => {
-    const { duration, opacity } = constants.demo.fadeOut;
+    const { duration, opacity }: { duration: number, opacity: number } = constants.demo.fadeOut;
 
     // fade out all characters
     characterTexts.forEach(characterText => {
@@ -260,7 +268,7 @@ const render = ({ characters, segments, readings }) => { // todo types
     setTimeout(playReadings, duration * 1000);
   };
 
-  const initializeChars = () => {
+  const initializeChars = (): void => {
     characterTexts.forEach(characterText => {
       layers[1].add(characterText);
 

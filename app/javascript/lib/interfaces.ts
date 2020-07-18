@@ -29,6 +29,10 @@ interface SegmentData {
   readonly color: string;
 }
 
+interface SegmentsData {
+  readonly [index: number]: SegmentData;
+}
+
 interface State {
   demo: {
     currentReading: {
@@ -44,5 +48,6 @@ export {
   CharacterData,
   ReadingData,
   SegmentData,
+  SegmentsData,
   State,
 }
