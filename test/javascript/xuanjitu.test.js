@@ -17,7 +17,7 @@ describe('getCharsInSegment', () => {
 
   const chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
 
-  const createTextMock = (idx) => {
+  const createTextMock = idx => {
     return { text: chars[idx] };
   };
 
@@ -26,25 +26,25 @@ describe('getCharsInSegment', () => {
   });
 
   describe('for horizontal segment', () => {
-    const left_coordinate = 0;
-    const right_coordinate = 6;
+    const leftCoordinate = 0;
+    const rightCoordinate = 6;
     const y = 0;
 
     beforeEach(() => {
       // prep the grid
-      for (let x = left_coordinate; x <= right_coordinate; x += 1) {
+      for (let x = leftCoordinate; x <= rightCoordinate; x += 1) {
         grid[y][x] = createTextMock(x);
       }
     });
 
-    describe ('left to right', () => {
+    describe('left to right', () => {
       beforeEach(() => {
         // prep the segment
         segment = {
           id: 1,
-          head_x: left_coordinate,
+          head_x: leftCoordinate,
           head_y: y,
-          tail_x: right_coordinate,
+          tail_x: rightCoordinate,
           tail_y: y,
           length: 7,
           color: 'red',
@@ -61,14 +61,14 @@ describe('getCharsInSegment', () => {
       });
     });
 
-    describe ('right to left', () => {
+    describe('right to left', () => {
       beforeEach(() => {
         // prep the segment
         segment = {
           id: 1,
-          head_x: right_coordinate,
+          head_x: rightCoordinate,
           head_y: y,
-          tail_x: left_coordinate,
+          tail_x: leftCoordinate,
           tail_y: y,
           length: 7,
           color: 'red',
@@ -87,16 +87,13 @@ describe('getCharsInSegment', () => {
   });
 
   describe('for vertical segment', () => {
-    let segment;
-    let expected;
-
-    const top_coordinate = 0;
-    const bottom_coordinate = 6;
+    const topCoordinate = 0;
+    const bottomCoordinate = 6;
     const x = 0;
 
     beforeEach(() => {
       // prep the grid
-      for (let y = top_coordinate; y <= bottom_coordinate; y += 1) {
+      for (let y = topCoordinate; y <= bottomCoordinate; y += 1) {
         grid[y][x] = createTextMock(y);
       }
     });
@@ -107,9 +104,9 @@ describe('getCharsInSegment', () => {
         segment = {
           id: 1,
           head_x: x,
-          head_y: top_coordinate,
+          head_y: topCoordinate,
           tail_x: x,
-          tail_y: bottom_coordinate,
+          tail_y: bottomCoordinate,
           length: 7,
           color: 'red',
         };
@@ -131,9 +128,9 @@ describe('getCharsInSegment', () => {
         segment = {
           id: 1,
           head_x: x,
-          head_y: bottom_coordinate,
+          head_y: bottomCoordinate,
           tail_x: x,
-          tail_y: top_coordinate,
+          tail_y: topCoordinate,
           length: 7,
           color: 'red',
         };
