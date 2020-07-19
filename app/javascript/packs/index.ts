@@ -1,4 +1,4 @@
-import { render } from '../lib/xuanjitu';
+import Xuanjitu from '../lib/xuanjitu';
 
 $('.footer').hide();
 
@@ -20,6 +20,7 @@ $.when(
     segments: segmentsResponse[0]['segments'],
     readings: readingsResponse[0]['readings'],
   };
-  render(data);
+  const xjt: Xuanjitu = new Xuanjitu(data);
+  xjt.run();
   // $('.footer').show();
 });
