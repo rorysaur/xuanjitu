@@ -1,4 +1,6 @@
 import Konva from 'konva';
+import Character from './character';
+import Reading from './reading';
 
 interface CharacterData {
   readonly text: string;
@@ -29,18 +31,10 @@ interface SegmentData {
   readonly color: string;
 }
 
-interface SegmentsData {
-  readonly [index: number]: SegmentData;
-}
-
 interface State {
   demo: {
-    currentReading: {
-      index: number;
-      length: number;
-    }
-    currentSidebarGroup: undefined | Konva.Group;
-    highlightedChars: Konva.Text[];
+    currentReading: Reading;
+    highlightedChars: Character[];
   }
 }
 
@@ -48,6 +42,5 @@ export {
   CharacterData,
   ReadingData,
   SegmentData,
-  SegmentsData,
   State,
 }
