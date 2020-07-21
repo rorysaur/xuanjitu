@@ -91,7 +91,13 @@ class Segment {
 
   private populateCharacters(grid: Character[][]): void {
     const getCharAtCoordinates = (x: number, y: number): Character => {
-      return grid[y][x];
+      const character = grid[y][x];
+
+      if (character === undefined) {
+        throw `character not found at coordinates ${x}, ${y}!`
+      } else {
+        return character;
+      }
     };
 
     if (this.isVertical()) {
@@ -110,6 +116,7 @@ class Segment {
       this.characters.push(getCharAtCoordinates(this.tail.x, this.tail.y));
     } else {
       // diagonal segment
+      throw 'diagonal segment not supported';
     }
   }
 
