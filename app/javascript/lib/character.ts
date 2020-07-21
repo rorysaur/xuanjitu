@@ -21,8 +21,7 @@ class Character {
 
   static createNode(character: CharacterData): Konva.Text {
     const { width, height, colorMappings, fontSize, fontFamily, strokeWidth }:
-      { width: number, height: number, colorMappings: object, fontSize: number, fontFamily: string, strokeWidth: number }
-      = constants.characters;
+      { width: number, height: number, colorMappings: object, fontSize: number, fontFamily: string, strokeWidth: number } = constants.characters;
     const { offset }: { offset: any } = constants.text;
 
     return new Konva.Text({
@@ -78,8 +77,8 @@ class Character {
 
   public createSidebarNode(x: number, y: number): Konva.Text {
     return new Konva.Text({
-      x: x,
-      y: y,
+      x,
+      y,
       text: this.text,
       fontFamily: constants.readingText.fontFamily,
       fontSize: constants.readingText.fontSize,

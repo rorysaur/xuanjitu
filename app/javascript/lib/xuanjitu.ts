@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import constants from './constants';
-import { CharacterData, ReadingData, SegmentData, State } from './interfaces';
+import { CharacterData, State } from './interfaces';
 import Character from './character';
 import Reading from './reading';
 import Segment from './segment';
@@ -11,9 +11,7 @@ class Xuanjitu {
   private readonly gridBackground: Konva.Rect;
   private readonly layers: Konva.Layer[];
   private readonly readings: Reading[];
-  private readonly segments: {
-    [index: number]: Segment;
-  };
+  private readonly segments: { [index: number]: Segment; };
   private readonly sidebarGroup: Konva.Group;
   private readonly stage: Konva.Stage;
   private state: State;
@@ -28,8 +26,7 @@ class Xuanjitu {
 
   static createGridBackground(): Konva.Rect {
     const { color, width, height, strokeWidth }:
-      { color: string, width: number, height: number, strokeWidth: number }
-      = constants.background;
+      { color: string, width: number, height: number, strokeWidth: number } = constants.background;
 
     return new Konva.Rect({
       width,

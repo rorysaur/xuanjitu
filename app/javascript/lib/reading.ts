@@ -1,5 +1,3 @@
-import Konva from 'konva';
-import constants from './constants';
 import { ReadingData } from './interfaces';
 import Segment from './segment';
 import Xuanjitu from './xuanjitu';

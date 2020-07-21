@@ -6,17 +6,19 @@ import Xuanjitu from './xuanjitu';
 
 class Segment {
   readonly id: number;
+  readonly length: number;
+  readonly color: string;
+  readonly characters: Character[];
+
   readonly head: {
     x: number;
     y: number;
   }
+
   readonly tail: {
     x: number;
     y: number;
   }
-  readonly length: number;
-  readonly color: string;
-  readonly characters: Character[];
 
   static createSegments(segmentsData: SegmentData[], grid: Character[][]): any {
     const segments = {};
