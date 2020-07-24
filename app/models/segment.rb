@@ -47,7 +47,7 @@ class Segment < ActiveRecord::Base
     # exclude segments that overlap with self
     candidate_segments.select do |candidate_segment|
       candidate_segment.head_position.in?(adjacent_positions) &&
-        !candidate_segment.head_position.in?(characters.map(&:position))
+        !overlaps_with?(candidate_segment)
     end
   end
 
@@ -65,5 +65,12 @@ class Segment < ActiveRecord::Base
 
   def tail_y
     tail_position.y_coordinate
+  end
+
+  private
+
+  def overlaps_with?(other_segment)
+    other_segment.head_position.between?(head_position, tail_position) ||
+      other_segment.tail_position.between?(head_position, tail_position)
   end
 end
