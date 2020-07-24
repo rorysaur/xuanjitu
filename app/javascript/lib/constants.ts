@@ -43,7 +43,7 @@ const constants = {
   },
   demo: {
     fadeIn: {
-      delayPerChar: 50,
+      delayPerChar: 300,
       duration: 0.5,
       opacity: 1
     },
@@ -53,7 +53,7 @@ const constants = {
     }
   },
   fadeIn: {
-    maxDuration: 1,
+    maxDuration: 6,
   },
   // focusText: {
   //   marginLeft: 20,
