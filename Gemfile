@@ -43,6 +43,7 @@ end
 
 group :test do
   gem 'minitest'
+  gem 'minitest-hooks'
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '>= 2.15'
   gem 'selenium-webdriver'
