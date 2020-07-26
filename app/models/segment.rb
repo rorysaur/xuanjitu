@@ -37,10 +37,12 @@ class Segment < ActiveRecord::Base
 
   def following_segments
     # segments of the same color whose head position is adjacent to self's tail position
-    candidate_segments = Segment.where(
-      color: color,
-      length: length,
-    )
+    candidate_segments = Segment.
+      includes(:head_position, :tail_position).
+      where(
+        color: color,
+        length: length,
+      )
 
     adjacent_positions = tail_position.adjacent_positions
 
