@@ -116,7 +116,7 @@ else
 end
 
 if !ReadingSegmentAssignment.any?
-  reading_segment_assignments_csv_path = File.join(Rails.root, "db", "data", "reading_segment_assignments.csv")
+  reading_segment_assignments_csv_path = File.join(Rails.root, "db", "data", "generated_reading_segment_assignments.csv")
   rows = CSV.parse(File.read(reading_segment_assignments_csv_path), headers: true, converters: :integer)
 
   ActiveRecord::Base.transaction do
