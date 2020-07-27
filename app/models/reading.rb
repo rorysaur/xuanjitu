@@ -1,5 +1,5 @@
 class Reading < ActiveRecord::Base
-  has_many :reading_segment_assignments
+  has_many :reading_segment_assignments, -> { order(:line_number) }
   has_many :segments, through: :reading_segment_assignments
 
   enum color: {

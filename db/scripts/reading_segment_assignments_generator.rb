@@ -31,7 +31,7 @@ class ReadingSegmentAssignmentsGenerator
   end
 
   def collected_attrs
-    green
+    black
   end
 
   def sample
@@ -95,9 +95,9 @@ class ReadingSegmentAssignmentsGenerator
     color = "green"
 
     left_min = x
-    left_max = x + num_steps
+    left_max = left_min + num_steps
     right_min = x + line_length
-    right_max = x + line_length + num_steps
+    right_max = right_min + num_steps
 
     if from_center
       left_to_right = [left_max, right_min]
@@ -206,9 +206,9 @@ class ReadingSegmentAssignmentsGenerator
     color = "green"
 
     left_min = x
-    left_max = x + num_steps
+    left_max = left_min + num_steps
     right_min = x + line_length
-    right_max = x + line_length + num_steps
+    right_max = right_min + num_steps
 
     row_indices = (0...num_rows).to_a
     row_indices = ascending_rows ? row_indices : row_indices.reverse
@@ -257,7 +257,169 @@ class ReadingSegmentAssignmentsGenerator
     results
   end
 
-  def black_horizontal
+  def black
+    starting_points = [
+      { x: 8, y: 1, block_number: 2 },
+      { x: 22, y: 8, block_number: 4 },
+      { x: 8, y: 22, block_number: 6 },
+      { x: 1, y: 8, block_number: 8 },
+    ]
+    rows = []
+
+    starting_points.each do |attrs|
+      orientation = (attrs[:block_number] % 4 == 0) ? :vertical : :horizontal
+
+      if orientation == :horizontal
+        rows << black_horizontal_short(reading_number: 1, ascending_rows: true, from_center: true, direction_mode: :reversed, **attrs)
+        rows << black_horizontal_short(reading_number: 2, ascending_rows: false, from_center: true, direction_mode: :conventional, **attrs)
+        rows << black_horizontal_short(reading_number: 3, ascending_rows: true, from_center: true, direction_mode: :conventional, **attrs)
+        rows << black_horizontal_short(reading_number: 4, ascending_rows: false, from_center: true, direction_mode: :reversed, **attrs)
+
+        rows << black_horizontal_short(reading_number: 5, ascending_rows: true, side: :right, **attrs)
+        rows << black_horizontal_short(reading_number: 6, ascending_rows: false, side: :right, **attrs)
+        rows << black_horizontal_short(reading_number: 7, ascending_rows: true, side: :left, **attrs)
+        rows << black_horizontal_short(reading_number: 8, ascending_rows: false, side: :left, **attrs)
+
+        rows << black_horizontal_long(reading_number: 9, ascending_rows: true, direction_mode: :reversed, **attrs)
+        rows << black_horizontal_long(reading_number: 10, ascending_rows: false, direction_mode: :conventional, **attrs)
+        rows << black_horizontal_long(reading_number: 11, ascending_rows: true, direction_mode: :conventional, **attrs)
+        rows << black_horizontal_long(reading_number: 12, ascending_rows: false, direction_mode: :reversed, **attrs)
+
+        rows << black_horizontal_long(reading_number: 13, ascending_rows: true, by_couplet: true, direction_mode: :reversed, **attrs)
+        rows << black_horizontal_long(reading_number: 14, ascending_rows: true, by_couplet: true, direction_mode: :conventional, **attrs)
+        rows << black_horizontal_long(reading_number: 15, ascending_rows: false, by_couplet: true, direction_mode: :reversed, **attrs)
+        rows << black_horizontal_long(reading_number: 16, ascending_rows: false, by_couplet: true, direction_mode: :conventional, **attrs)
+      elsif orientation == :vertical
+      end
+    end
+
+    rows.flatten
+  end
+
+  def black_horizontal_short(reading_number:, ascending_rows:, from_center: false, side: nil, direction_mode: nil, x:, y:, block_number:)
+    raise "you need to specify a direction_mode" if from_center && direction_mode.nil?
+    raise "you need to specify a side" if !from_center && side.nil?
+
+    line_length = 6
+    num_steps = line_length - 1
+    num_lines = 6
+    num_rows = 6
+    color = "black"
+
+    left_min = x
+    left_max = left_min + num_steps
+    right_min = x + line_length + 1
+    right_max = right_min + num_steps
+
+    row_indices = (0...num_rows).to_a
+    row_indices = ascending_rows ? row_indices : row_indices.reverse
+
+    results = []
+
+    row_indices.each do |row_idx|
+      line_number = ascending_rows ? (row_idx + 1) : (num_lines - row_idx)
+
+      head_x =
+        if from_center
+          if direction_mode == :conventional # aka "evens on left"
+            row_idx.even? ? left_max : right_min
+          elsif direction_mode == :reversed # aka "evens on right"
+            row_idx.even? ? right_min : left_max
+          end
+        else
+          if side == :left
+            left_max
+          elsif side == :right
+            right_min
+          end
+        end
+
+      csv_row = {
+        color: color,
+        block_number: block_number,
+        reading_number: reading_number,
+        head_y: y + row_idx,
+        head_x: head_x,
+        line_number: line_number,
+        enabled: 1,
+      }
+
+      results << csv_row
+    end
+
+    results
+  end
+
+  def black_horizontal_long(reading_number:, ascending_rows:, direction_mode:, by_couplet: false, x:, y:, block_number:)
+    line_length = 6
+    num_steps = line_length - 1
+    num_lines = 12
+    num_rows = 6
+    color = "black"
+
+    left_min = x
+    left_max = left_min + num_steps
+    right_min = x + line_length + 1
+    right_max = right_min + num_steps
+
+    left_to_right = [left_max, right_min]
+    right_to_left = left_to_right.reverse
+
+    row_indices = (0...num_rows).to_a
+    row_indices = ascending_rows ? row_indices : row_indices.reverse
+
+    results = []
+
+    row_indices.each do |row_idx|
+      if by_couplet
+        if ascending_rows
+          even_row = (row_idx * 2) + 1
+          odd_row = row_idx * 2
+        else
+          even_row = num_lines - ((row_idx * 2) + 2)
+          odd_row = num_lines - ((row_idx * 2) + 1)
+        end
+
+        line_number1 = row_idx.even? ? even_row : odd_row
+        line_number2 = line_number1 + 2
+
+        head_x_coordinates =
+          if direction_mode == :conventional # aka "evens start on left"
+            left_to_right
+          elsif direction_mode == :reversed # aka "evens start on right"
+            right_to_left
+          end
+      else
+        diff = (row_idx * 2) + 1
+        line_number1 = ascending_rows ? diff : (num_lines - diff)
+        line_number2 = line_number1 + 1
+
+        head_x_coordinates =
+          if direction_mode == :conventional # aka "evens start on left"
+            left_to_right
+          elsif direction_mode == :reversed # aka "evens start on right"
+            right_to_left
+          end
+      end
+
+      line_numbers = [line_number1, line_number2]
+
+      (0..1).each do |i|
+        csv_row = {
+          color: color,
+          block_number: block_number,
+          reading_number: reading_number,
+          head_y: y + row_idx,
+          head_x: head_x_coordinates[i],
+          line_number: line_numbers[i],
+          enabled: 1,
+        }
+
+        results << csv_row
+      end
+    end
+
+    results
   end
 
   def black_vertical
