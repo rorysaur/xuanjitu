@@ -31,19 +31,7 @@ class ReadingSegmentAssignmentsGenerator
   end
 
   def collected_attrs
-    black
-  end
-
-  def sample
-    {
-      color: "green",
-      block_number: 1,
-      reading_number: 1,
-      head_y: 1,
-      head_x: 6,
-      line_number: 1,
-      enabled: 1,
-    }
+    yellow
   end
 
   def green
@@ -553,13 +541,113 @@ class ReadingSegmentAssignmentsGenerator
     results
   end
 
+  def yellow
+    starting_points = [
+      { x: 12, y: 8, block_number: 10 },
+      { x: 17, y: 12, block_number: 12 },
+      { x: 12, y: 17, block_number: 14 },
+      { x: 8, y: 12, block_number: 16 },
+    ]
+    rows = []
+
+    starting_points.each do |attrs|
+      rows << yellow_helper(reading_number: 1, line_numbers: [1, 2, 3, 4], snake: false, direction_mode: :conventional, **attrs)
+      rows << yellow_helper(reading_number: 2, line_numbers: [1, 2, 3, 4], snake: false, direction_mode: :reversed, **attrs)
+      rows << yellow_helper(reading_number: 3, line_numbers: [4, 3, 2, 1], snake: false, direction_mode: :conventional, **attrs)
+      rows << yellow_helper(reading_number: 4, line_numbers: [4, 3, 2, 1], snake: false, direction_mode: :reversed, **attrs)
+
+      rows << yellow_helper(reading_number: 5, line_numbers: [1, 2, 3, 4], snake: true, direction_mode: :conventional, **attrs)
+      rows << yellow_helper(reading_number: 6, line_numbers: [4, 3, 2, 1], snake: true, direction_mode: :reversed, **attrs)
+      rows << yellow_helper(reading_number: 7, line_numbers: [1, 2, 3, 4], snake: true, direction_mode: :reversed, **attrs)
+      rows << yellow_helper(reading_number: 8, line_numbers: [4, 3, 2, 1], snake: true, direction_mode: :conventional, **attrs)
+
+      rows << yellow_helper(reading_number: 9, line_numbers: [1, 4, 3, 2], snake: false, direction_mode: :conventional, **attrs)
+      rows << yellow_helper(reading_number: 10, line_numbers: [2, 3, 4, 1], snake: false, direction_mode: :conventional, **attrs)
+      rows << yellow_helper(reading_number: 11, line_numbers: [1, 4, 3, 2], snake: false, direction_mode: :reversed, **attrs)
+      rows << yellow_helper(reading_number: 12, line_numbers: [2, 3, 4, 1], snake: false, direction_mode: :reversed, **attrs)
+
+      rows << yellow_helper(reading_number: 13, line_numbers: [4, 1, 2, 3], snake: false, direction_mode: :conventional, **attrs)
+      rows << yellow_helper(reading_number: 14, line_numbers: [3, 2, 1, 4], snake: false, direction_mode: :conventional, **attrs)
+      rows << yellow_helper(reading_number: 15, line_numbers: [4, 1, 2, 3], snake: false, direction_mode: :reversed, **attrs)
+      rows << yellow_helper(reading_number: 16, line_numbers: [3, 2, 1, 4], snake: false, direction_mode: :reversed, **attrs)
+    end
+
+    rows.flatten
+  end
+
+  def yellow_helper(reading_number:, line_numbers:, snake:, direction_mode:, x:, y:, block_number:)
+    line_length = 5
+    num_steps = line_length - 1
+    num_rows_cols = 4
+    color = "yellow"
+    orientation = (block_number % 4 == 0) ? :vertical : :horizontal
+
+    if orientation == :horizontal
+      min_head, max_head = x, (x + num_steps)
+    elsif orientation == :vertical
+      min_head, max_head = y, (y + num_steps)
+      line_numbers = line_numbers.reverse
+    end
+
+    # a terrible little change that renders the `direction_mode` variable
+    # meaningless, but makes the same code work for both horizontal and
+    # vertical blocks with snaking lines
+    if snake && orientation == :vertical
+      if direction_mode == :conventional
+        direction_mode = :reversed
+      elsif direction_mode == :reversed
+        direction_mode = :conventional
+      end
+    end
+
+    row_col_indices = (0...num_rows_cols).to_a
+
+    results = []
+
+    row_col_indices.each do |row_col_idx|
+      head_coordinate =
+        if snake
+          if direction_mode == :conventional # aka "evens start on left / from top"
+            row_col_idx.even? ? min_head : max_head
+          elsif direction_mode == :reversed # aka "evens start on right / from bottom"
+            row_col_idx.even? ? max_head : min_head
+          end
+        else
+          if direction_mode == :conventional # left to right / top to bottom
+            min_head
+          elsif direction_mode == :reversed # right to left / bottom to top
+            max_head
+          end
+        end
+
+      head_coordinate_attrs = {
+        horizontal: {
+          y: y + row_col_idx,
+          x: head_coordinate,
+        },
+        vertical: {
+          y: head_coordinate,
+          x: x + row_col_idx,
+        }
+      }
+
+      csv_row = {
+        color: color,
+        block_number: block_number,
+        reading_number: reading_number,
+        head_y: head_coordinate_attrs[orientation][:y],
+        head_x: head_coordinate_attrs[orientation][:x],
+        line_number: line_numbers[row_col_idx],
+        enabled: 1,
+      }
+
+      results << csv_row
+    end
+
+    results
+  end
+
   def purple
-  end
-
-  def yellow_horizontal
-  end
-
-  def yellow_vertical
   end
 
   def yellow_center
