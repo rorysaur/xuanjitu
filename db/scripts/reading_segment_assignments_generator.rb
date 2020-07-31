@@ -31,7 +31,7 @@ class ReadingSegmentAssignmentsGenerator
   end
 
   def collected_attrs
-    yellow
+    purple
   end
 
   def green
@@ -648,6 +648,74 @@ class ReadingSegmentAssignmentsGenerator
   end
 
   def purple
+    starting_points = [
+      { x: 8, y: 8, block_number: 9 },
+      { x: 17, y: 8, block_number: 11 },
+      { x: 17, y: 17, block_number: 13 },
+      { x: 8, y: 17, block_number: 15 },
+    ]
+    reading_number_to_line_numbers = {
+      3 => [1, 2, 3, 4],
+      4 => [4, 3, 2, 1],
+      5 => [1, 4, 3, 2],
+      6 => [2, 3, 4, 1],
+      7 => [4, 1, 2, 3],
+      8 => [3, 2, 1, 4],
+      9 => [2, 1, 4, 3],
+      10 => [3, 4, 1, 2],
+    }
+    rows = []
+
+    starting_points.each do |attrs|
+      rows << purple_helper(reading_number: 1, line_numbers: [1, 2, 3, 4], snake: true, direction_mode: :reversed, **attrs)
+      rows << purple_helper(reading_number: 2, line_numbers: [4, 3, 2, 1], snake: true, direction_mode: :conventional, **attrs)
+      (3..10).each do |reading_number|
+        line_numbers = reading_number_to_line_numbers[reading_number]
+        rows << purple_helper(reading_number: reading_number, line_numbers: line_numbers, **attrs)
+      end
+    end
+
+    rows.flatten
+  end
+
+  def purple_helper(reading_number:, line_numbers:, snake: false, direction_mode: nil, x:, y:, block_number:)
+    raise "missing direction_mode" if snake && direction_mode.nil?
+
+    line_length = 4
+    num_steps = line_length - 1
+    num_rows = 4
+    color = "purple"
+
+    min_x, max_x = x, x + num_steps
+
+    results = []
+
+    num_rows.times do |row_idx|
+      head_x_coordinate =
+        if snake
+          if direction_mode == :conventional
+            row_idx.even? ? min_x : max_x
+          elsif direction_mode == :reversed
+            row_idx.even? ? max_x : min_x
+          end
+        else
+          min_x
+        end
+
+      csv_row = {
+        color: color,
+        block_number: block_number,
+        reading_number: reading_number,
+        head_y: y + row_idx,
+        head_x: head_x_coordinate,
+        line_number: line_numbers[row_idx],
+        enabled: 1,
+      }
+
+      results << csv_row
+    end
+
+    results
   end
 
   def yellow_center
