@@ -31,7 +31,7 @@ class ReadingSegmentAssignmentsGenerator
   end
 
   def collected_attrs
-    purple
+    purple_center
   end
 
   def green
@@ -719,8 +719,65 @@ class ReadingSegmentAssignmentsGenerator
   end
 
   def yellow_center
+    starting_points = [
+      { x: 12, y: 12, block_number: 17 },
+      { x: 16, y: 12, block_number: 17 },
+      { x: 16, y: 16, block_number: 17 },
+      { x: 12, y: 16, block_number: 17 },
+    ]
+    color = "yellow"
+
+    rows = []
+
+    4.times do |reading_idx|
+      reading_number = reading_idx + 1
+
+      starting_points.rotate(reading_idx).each_with_index do |attrs, line_idx|
+        csv_row = {
+          color: color,
+          block_number: attrs[:block_number],
+          reading_number: reading_number,
+          head_y: attrs[:y],
+          head_x: attrs[:x],
+          line_number: line_idx + 1,
+          enabled: 1,
+        }
+
+        rows << csv_row
+      end
+
+    end
+
+    rows
   end
 
   def purple_center
+    head_coordinates = [
+      { x: 14, y: 13 },
+      { x: 13, y: 14 },
+      { x: 15, y: 13 },
+      { x: 15, y: 15 },
+    ]
+    color = "purple"
+    block_number = 18
+    reading_number = 1
+
+    rows = []
+
+    head_coordinates.each_with_index do |attrs, line_idx|
+      csv_row = {
+        color: color,
+        block_number: block_number,
+        reading_number: reading_number,
+        head_y: attrs[:y],
+        head_x: attrs[:x],
+        line_number: line_idx + 1,
+        enabled: 1,
+      }
+
+      rows << csv_row
+    end
+    
+    rows
   end
 end
