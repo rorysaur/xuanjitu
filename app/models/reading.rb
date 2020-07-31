@@ -87,6 +87,14 @@ class Reading < ActiveRecord::Base
     end
   end
 
+  def enable!
+    update!(enabled: true)
+  end
+
+  def disable!
+    update!(enabled: false)
+  end
+
   def segments_by_line_number
     segments.order(:line_number)
   end
