@@ -18,26 +18,45 @@ class Reading < ActiveRecord::Base
   validates :number, uniqueness: { scope: [:color, :block_number] }
 
   class << self
+    def in_block_order
+      num_blocks = 18
+      reading_number = 1
+      # messages = []
+      results = []
+      all_readings = Reading.includes(:segments).enabled
+
+      # in each block there are between 1-24 readings.
+      # pick the next reading from each block, until there are no more
+      # readings.
+
+      loop do
+        readings_found_for_reading_number = false
+
+        (1..num_blocks).each do |block_number|
+          reading = all_readings.select do |rdg|
+            rdg.block_number == block_number && rdg.number == reading_number
+          end
+
+          if reading.present?
+            # messages << "reading found: #{reading.color}, block #{block_number}, reading #{reading_number}"
+            results << reading
+            readings_found_for_reading_number = true
+          end
+        end
+
+        if readings_found_for_reading_number
+          reading_number += 1
+        else
+          break
+        end
+      end
+
+      # puts messages.join("\n")
+      results
+    end
+
     def in_demo_order
-      enabled_readings = includes(:segments).enabled
-
-      green_readings = enabled_readings.color(:green).to_a
-      black_readings = enabled_readings.color(:black).to_a
-      yellow_readings = enabled_readings.color(:yellow).to_a
-      purple_readings = enabled_readings.color(:purple).to_a
-
-      outer_readings = green_readings.zip(black_readings).flatten.compact
-
-      final_readings = [yellow_readings.pop, purple_readings.pop]
-
-      inner_readings =
-        purple_readings.
-        zip(yellow_readings).
-        flatten.
-        concat(final_readings).
-        compact
-
-      readings_without_red = outer_readings + inner_readings
+      readings_without_red = Reading.in_block_order
 
       red_readings = readings_without_red.map do |reading|
         get_adjacent_red_reading(reading)
