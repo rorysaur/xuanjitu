@@ -31,7 +31,15 @@ class ReadingSegmentAssignmentsGenerator
   end
 
   def collected_attrs
-    purple_center
+    results =
+      green +
+      black +
+      yellow +
+      purple +
+      yellow_center +
+      purple_center
+
+    results
   end
 
   def green
