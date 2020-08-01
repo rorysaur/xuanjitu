@@ -33,7 +33,7 @@ class Reading < ActiveRecord::Base
         readings_found_for_reading_number = false
 
         (1..num_blocks).each do |block_number|
-          reading = all_readings.select do |rdg|
+          reading = all_readings.find do |rdg|
             rdg.block_number == block_number && rdg.number == reading_number
           end
 
