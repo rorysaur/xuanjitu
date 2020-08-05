@@ -1,4 +1,6 @@
 class Position < ActiveRecord::Base
+  has_one :character
+
   enum color: {
     black: "black",
     blue: "blue",
