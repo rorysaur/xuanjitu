@@ -40,9 +40,9 @@ if !Character.any?
   file_path = File.join(Rails.root, "db", "data", "841.txt")
   text = File.read(file_path)
 
-  # read rhymes file
-  csv_path = File.join(Rails.root, "db", "data", "rhymes.csv")
-  rhymes = CSV.parse(File.read(csv_path), headers: true)
+  # # read rhymes file
+  # csv_path = File.join(Rails.root, "db", "data", "rhymes.csv")
+  # rhymes = CSV.parse(File.read(csv_path), headers: true)
 
   ActiveRecord::Base.transaction do
     lines = text.split("\n")
@@ -58,7 +58,7 @@ if !Character.any?
           text: char,
           form: Character.forms[:simplified],
           position: position,
-          rhyme: rhymes[line_idx][char_idx].present?,
+          # rhyme: rhymes[line_idx][char_idx].present?,
         )
       end
     end
@@ -69,7 +69,7 @@ end
 
 # seed segments if table is empty
 if !Segment.any?
-  segments_csv_path = File.join(Rails.root, "db", "data", "segments.csv")
+  segments_csv_path = File.join(Rails.root, "db", "data", "generated_segments.csv")
   segment_rows = CSV.parse(File.read(segments_csv_path), headers: true, converters: :integer)
 
   ActiveRecord::Base.transaction do
@@ -116,7 +116,7 @@ else
 end
 
 if !ReadingSegmentAssignment.any?
-  reading_segment_assignments_csv_path = File.join(Rails.root, "db", "data", "reading_segment_assignments.csv")
+  reading_segment_assignments_csv_path = File.join(Rails.root, "db", "data", "generated_reading_segment_assignments.csv")
   rows = CSV.parse(File.read(reading_segment_assignments_csv_path), headers: true, converters: :integer)
 
   ActiveRecord::Base.transaction do
