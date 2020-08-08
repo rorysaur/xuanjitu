@@ -65,11 +65,17 @@ const constants = {
   //   y: 100,
   // },
   readingText: {
+    charWidthMultiplier: 1.5,
     lineHeight: 45,
     marginLeft: 60,
     fontFamily: 'Ma Shan Zheng',
     fontSize: 30,
+    rightColumnOffset: 200,
     y: 100,
+    pinyin: {
+      fontFamily: 'Roboto Mono',
+      fontSize: 14,
+    }
   },
   stage: {
     height: 1200,

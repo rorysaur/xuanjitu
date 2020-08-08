@@ -8,6 +8,7 @@ class Character {
   readonly x: number;
   readonly y: number;
   readonly color: string;
+  readonly pinyin: string;
 
   static createFadeInTween(node: Konva.Text): Konva.Tween {
     const { duration, opacity }: { duration: number, opacity: number } = constants.demo.fadeIn;
@@ -37,10 +38,11 @@ class Character {
   }
 
   constructor(characterData: CharacterData) {
-    const { text, color, x_coordinate, y_coordinate } = characterData;
+    const { text, color, pinyin, x_coordinate, y_coordinate } = characterData;
 
     this.text = text;
     this.color = color;
+    this.pinyin = pinyin;
     this.x = x_coordinate;
     this.y = y_coordinate;
 
@@ -73,6 +75,22 @@ class Character {
 
   public hide(): void {
     this.node.setAttrs({ opacity: constants.demo.fadeOut.opacity });
+  }
+
+  public createPinyinNode(x: number, y: number): Konva.Text {
+    const node: Konva.Text = new Konva.Text({
+      x,
+      y,
+      text: this.pinyin,
+      fontFamily: constants.readingText.pinyin.fontFamily,
+      fontSize: constants.readingText.pinyin.fontSize,
+      fill: constants.characters.colorMappings[this.color],
+      opacity: 0,
+    });
+
+    node.offsetX(node.width() / 2);
+
+    return node;
   }
 
   public createSidebarNode(x: number, y: number): Konva.Text {

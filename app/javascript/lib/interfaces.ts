@@ -8,6 +8,7 @@ interface CharacterData {
   readonly x_coordinate: number;
   readonly y_coordinate: number;
   readonly color: string;
+  readonly pinyin: string;
   readonly rhyme: boolean;
   readonly segment_ids: number[];
 }

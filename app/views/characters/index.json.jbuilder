@@ -4,6 +4,7 @@ json.characters @characters do |char|
   json.x_coordinate char.x_coordinate
   json.y_coordinate char.y_coordinate
   json.color char.color
+  json.pinyin char.pinyin
   json.rhyme char.rhyme?
   json.segment_ids char.segments.map(&:id)
 end

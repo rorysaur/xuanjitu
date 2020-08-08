@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_13_221307) do
+ActiveRecord::Schema.define(version: 2020_08_07_031257) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,14 @@ ActiveRecord::Schema.define(version: 2020_07_13_221307) do
     t.integer "position_id", null: false
     t.boolean "rhyme", default: false
     t.index ["position_id"], name: "index_characters_on_position_id"
+  end
+
+  create_table "pinyin_forms", force: :cascade do |t|
+    t.integer "character_id", null: false
+    t.string "text_diacritic", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["character_id"], name: "index_pinyin_forms_on_character_id"
   end
 
   create_table "positions", force: :cascade do |t|

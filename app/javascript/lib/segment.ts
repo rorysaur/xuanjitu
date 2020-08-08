@@ -43,12 +43,24 @@ class Segment {
     this.characters = [];
   }
 
-  public play(lineNumber: number, isLastSegment: boolean, xjt: Xuanjitu): void {
+  public play(lineIndex: number, isLastSegment: boolean, xjt: Xuanjitu): void {
     const { delayPerChar, duration }: { delayPerChar: number, duration: number } = constants.demo.fadeIn;
-    const delayOffset: number = this.length * lineNumber * delayPerChar;
+    const delayOffset: number = this.length * lineIndex * delayPerChar;
+    const sidebarLineHeight = constants.readingText.lineHeight;
 
-    const sidebarY: number = lineNumber * constants.readingText.lineHeight;
-    let sidebarX: number = 0;
+    let sidebarX;
+    let sidebarLineIndex;
+
+    if (lineIndex > 5) {
+      sidebarLineIndex = lineIndex % 6;
+      sidebarX = constants.readingText.rightColumnOffset;
+    } else {
+      sidebarLineIndex = lineIndex;
+      sidebarX = 0;
+    }
+
+    const sidebarY: number = sidebarLineIndex * (2 * sidebarLineHeight);
+    const pinyinY: number = sidebarY + sidebarLineHeight;
 
     this.characters.forEach((character: Character, index: number) => {
       let isRepeatChar: boolean = false;
@@ -64,8 +76,12 @@ class Segment {
 
       // prep sidebar fade-in
       const sidebarChar: Konva.Text = character.createSidebarNode(sidebarX, sidebarY);
+      const pinyinX: number = sidebarX + (sidebarChar.width() / 2);
+      const sidebarPinyin: Konva.Text = character.createPinyinNode(pinyinX, pinyinY);
       xjt.addSidebarNode(sidebarChar);
+      xjt.addSidebarNode(sidebarPinyin);
       const fadeInSidebar: Konva.Tween = Character.createFadeInTween(sidebarChar);
+      const fadeInPinyin: Konva.Tween = Character.createFadeInTween(sidebarPinyin);
 
       const delay: number = delayOffset + (delayPerChar * index);
 
@@ -74,6 +90,7 @@ class Segment {
         () => {
           if (!isRepeatChar) { fadeInGrid.play(); }
           fadeInSidebar.play();
+          fadeInPinyin.play();
 
           // if it's the last char of the last segment, play the next reading
           const isLastChar: boolean = index === (this.length - 1);
@@ -85,7 +102,7 @@ class Segment {
       );
 
       // update variables
-      sidebarX += sidebarChar.width();
+      sidebarX += sidebarChar.width() * constants.readingText.charWidthMultiplier;
     });
   }
 
