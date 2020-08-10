@@ -143,9 +143,7 @@ class Xuanjitu {
     this.state.demo.currentReading = reading;
 
     // clean up grid
-    this.state.demo.highlightedChars.forEach((character: Character) => {
-      character.hide();
-    });
+    this.characters.forEach((character: Character) => { character.hide(); });
     this.state.demo.highlightedChars = [];
 
     // clean up sidebar
