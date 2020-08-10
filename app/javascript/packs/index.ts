@@ -1,7 +1,5 @@
 import Xuanjitu from '../lib/xuanjitu';
 
-$('.footer').hide();
-
 let data: any;
 
 $.when(
@@ -22,5 +20,4 @@ $.when(
   };
   const xjt: Xuanjitu = new Xuanjitu(data);
   xjt.run();
-  // $('.footer').show();
 });

@@ -1,4 +1,6 @@
 <div id="container"></div>
-<div class="footer">
-  a work in progress by <a href="https://github.com/rorysaur/xuanjitu">rorysaur</a>
-</div>
+<% if Rails.env.production? %>
+  <div class="footer">
+    a <a href="https://github.com/rorysaur/xuanjitu">work in progress</a> by rorysaur
+  </div>
+<% end %>
