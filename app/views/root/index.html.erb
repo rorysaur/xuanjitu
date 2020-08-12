@@ -1,6 +1,4 @@
 <div id="container"></div>
-<% if Rails.env.production? %>
-  <div class="footer">
-    a <a href="https://github.com/rorysaur/xuanjitu">work in progress</a> by rorysaur
-  </div>
-<% end %>
+<div class="footer">
+  a <%= link_to "work in progress", "https://github.com/rorysaur/xuanjitu" %> by rorysaur | <%= link_to "about", about_path, target: :_blank %>
+</div>
