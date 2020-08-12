@@ -9,6 +9,6 @@ class Character < ActiveRecord::Base
 
   def pinyin
     # a semi-arbitrary hunch that the last form listed tends to be the best
-    pinyin_forms.order(:id).last.text_diacritic
+    pinyin_forms.max { |a, b| a.id <=> b.id }.text_diacritic
   end
 end
