@@ -72,7 +72,7 @@ Almost all of the rules that determine which segments and readings the app shoul
 The CSVs and other source data can be found in `db/data`. The generator scripts can be found in `db/scripts`.
 
 To change the logic for generating valid segments:
-1. Edit the script `generate_segments.rb`
+1. Edit the script `segments_generator.rb`
 2. Load the file and run `SegmentsGenerator.new.generate`
 3. This will overwrite `db/data/generated_segments.csv`
 
