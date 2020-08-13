@@ -43,8 +43,9 @@ const constants = {
   },
   demo: {
     fadeIn: {
-      delayPerChar: 300,
-      duration: 0.5,
+      delayPerChar: 300, // ms
+      delayPerReading: 2000, // ms
+      duration: 0.5, // sec
       opacity: 1
     },
     fadeOut: {

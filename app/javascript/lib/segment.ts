@@ -44,7 +44,7 @@ class Segment {
   }
 
   public play(lineIndex: number, isLastSegment: boolean, xjt: Xuanjitu): void {
-    const { delayPerChar, duration }: { delayPerChar: number, duration: number } = constants.demo.fadeIn;
+    const { delayPerChar, delayPerReading }: { delayPerChar: number, delayPerReading: number } = constants.demo.fadeIn;
     const delayOffset: number = this.length * lineIndex * delayPerChar;
     const sidebarLineHeight = constants.readingText.lineHeight;
 
@@ -95,7 +95,7 @@ class Segment {
           // if it's the last char of the last segment, play the next reading
           const isLastChar: boolean = index === (this.length - 1);
           if (isLastSegment && isLastChar) {
-            setTimeout(xjt.continueRun.bind(xjt), duration * 1000 * 2);
+            setTimeout(xjt.continueRun.bind(xjt), delayPerReading);
           }
         },
         delay,
