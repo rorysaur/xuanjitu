@@ -1,0 +1,14 @@
+@import "src/loaders";
+
+.loader {
+  @include loader12-modified(
+    $size: 6px,
+    $gap: 16px,
+    $duration: 1s,
+    $align: middle
+  );
+}
+
+.loader-container {
+  height: 765px;
+}
