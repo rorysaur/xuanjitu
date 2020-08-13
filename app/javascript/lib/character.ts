@@ -47,14 +47,15 @@ class Character {
     this.y = y_coordinate;
 
     this.node = Character.createNode(characterData);
+    this.node.opacity(0);
   }
 
   public fadeIn(): void {
-    this.node.opacity(0);
+    const { delay, maxDuration }: { delay: number, maxDuration: number } = constants.fadeIn;
 
     const fadeIn: Konva.Tween = new Konva.Tween({
       node: this.node,
-      duration: Math.random() * constants.fadeIn.maxDuration,
+      duration: Math.random() * (maxDuration - delay),
       opacity: 1,
     });
 

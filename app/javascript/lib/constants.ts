@@ -53,7 +53,8 @@ const constants = {
     }
   },
   fadeIn: {
-    maxDuration: 6,
+    delay: 1,
+    maxDuration: 7,
   },
   // focusText: {
   //   marginLeft: 20,

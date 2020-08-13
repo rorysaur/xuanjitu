@@ -87,8 +87,10 @@ class Xuanjitu {
   }
 
   public run(): void {
-    this.render();
-    setTimeout(this.playDemo.bind(this), constants.fadeIn.maxDuration * 1000);
+    const { delay, maxDuration }: { delay: number, maxDuration: number } = constants.fadeIn;
+
+    setTimeout(this.render.bind(this), delay * 1000);
+    setTimeout(this.playDemo.bind(this), maxDuration * 1000);
   }
 
   public addSidebarNode(node: any): void {
@@ -166,6 +168,7 @@ class Xuanjitu {
       this.stage.add(layer);
       layer.draw();
     });
+
     this.fadeInChars();
   }
 }
