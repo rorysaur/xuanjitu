@@ -93,7 +93,7 @@ class Character {
       this.pinyinNode.transformsEnabled('position');
       this.pinyinNode.perfectDrawEnabled(false);
     } else {
-      this.pinyinNode.setAttrs({ x, y });
+      this.pinyinNode.setAttrs({ x, y, opacity: 0 });
     }
 
     return this.pinyinNode;
@@ -118,7 +118,7 @@ class Character {
       this.sidebarNode.transformsEnabled('position');
       this.sidebarNode.perfectDrawEnabled(false);
     } else {
-      this.sidebarNode.setAttrs({ x, y });
+      this.sidebarNode.setAttrs({ x, y, opacity: 0 });
     }
 
     return this.sidebarNode;
