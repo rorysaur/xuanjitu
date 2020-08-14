@@ -9,16 +9,11 @@ class Character {
   readonly y: number;
   readonly color: string;
   readonly pinyin: string;
-
-  static createFadeInTween(node: Konva.Text): Konva.Tween {
-    const { duration, opacity }: { duration: number, opacity: number } = constants.demo.fadeIn;
-
-    return new Konva.Tween({
-      node,
-      duration,
-      opacity,
-    });
-  }
+  pinyinNode: Konva.Text;
+  sidebarNode: Konva.Text;
+  gridTween: Konva.Tween;
+  sidebarTween: Konva.Tween;
+  pinyinTween: Konva.Tween;
 
   static createNode(character: CharacterData): Konva.Text {
     const { width, height, colorMappings, fontSize, fontFamily, strokeWidth }:
@@ -50,59 +45,83 @@ class Character {
     this.node.opacity(0);
   }
 
-  public fadeIn(): void {
+  public initialFadeIn(): void {
     const { delay, maxDuration }: { delay: number, maxDuration: number } = constants.fadeIn;
 
-    const fadeIn: Konva.Tween = new Konva.Tween({
-      node: this.node,
+    this.node.to({
       duration: Math.random() * (maxDuration - delay),
       opacity: 1,
     });
+  }
 
-    fadeIn.play();
+  public fadeIn(): void {
+    this.fadeInNode(this.node);
   }
 
   public fadeOut(): void {
     const { duration, opacity }: { duration: number, opacity: number } = constants.demo.fadeOut;
 
-    const fadeOut: Konva.Tween = new Konva.Tween({
+    this.node.to({
       duration,
       opacity,
-      node: this.node,
     });
-
-    fadeOut.play();
   }
 
   public hide(): void {
     this.node.setAttrs({ opacity: constants.demo.fadeOut.opacity });
   }
 
-  public createPinyinNode(x: number, y: number): Konva.Text {
-    const node: Konva.Text = new Konva.Text({
-      x,
-      y,
-      text: this.pinyin,
-      fontFamily: constants.readingText.pinyin.fontFamily,
-      fontSize: constants.readingText.pinyin.fontSize,
-      fill: constants.characters.colorMappings[this.color],
-      opacity: 0,
-    });
+  public getPinyinNodeAt(x: number, y: number): Konva.Text {
+    if (this.pinyinNode === undefined) {
+      this.pinyinNode = new Konva.Text({
+        x,
+        y,
+        text: this.pinyin,
+        fontFamily: constants.readingText.pinyin.fontFamily,
+        fontSize: constants.readingText.pinyin.fontSize,
+        fill: constants.characters.colorMappings[this.color],
+        opacity: 0,
+      });
+      this.pinyinNode.offsetX(this.pinyinNode.width() / 2);
+    } else {
+      this.pinyinNode.setAttrs({ x, y });
+    }
 
-    node.offsetX(node.width() / 2);
-
-    return node;
+    return this.pinyinNode;
   }
 
-  public createSidebarNode(x: number, y: number): Konva.Text {
-    return new Konva.Text({
-      x,
-      y,
-      text: this.text,
-      fontFamily: constants.readingText.fontFamily,
-      fontSize: constants.readingText.fontSize,
-      fill: constants.characters.colorMappings[this.color],
-      opacity: 0,
+  public fadeInPinyin(): void {
+    this.fadeInNode(this.pinyinNode);
+  }
+
+  public getSidebarNodeAt(x: number, y: number): Konva.Text {
+    if (this.sidebarNode === undefined) {
+      this.sidebarNode = new Konva.Text({
+        x,
+        y,
+        text: this.text,
+        fontFamily: constants.readingText.fontFamily,
+        fontSize: constants.readingText.fontSize,
+        fill: constants.characters.colorMappings[this.color],
+        opacity: 0,
+      });
+    } else {
+      this.sidebarNode.setAttrs({ x, y });
+    }
+
+    return this.sidebarNode;
+  }
+
+  public fadeInSidebar(): void {
+    this.fadeInNode(this.sidebarNode);
+  }
+
+  private fadeInNode(node: Konva.Text): void {
+    const { duration, opacity }: { duration: number, opacity: number } = constants.demo.fadeIn;
+
+    node.to({
+      duration,
+      opacity,
     });
   }
 }

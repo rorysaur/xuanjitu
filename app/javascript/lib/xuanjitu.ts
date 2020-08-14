@@ -123,7 +123,7 @@ class Xuanjitu {
 
   private fadeInChars(): void {
     this.characters.forEach((character: Character): void => {
-      character.fadeIn();
+      character.initialFadeIn();
     });
   }
 
@@ -151,7 +151,7 @@ class Xuanjitu {
     // clean up sidebar
     const oldNodes: any = this.sidebarGroup.getChildren();
     this.sidebarGroup.removeChildren();
-    oldNodes.each(node => { node.destroy(); });
+    oldNodes.each(node => { node.remove(); });
 
     reading.play(this);
   }

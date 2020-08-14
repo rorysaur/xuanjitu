@@ -71,26 +71,23 @@ class Segment {
         isRepeatChar = true;
       } else {
         xjt.highlight(character);
-        fadeInGrid = Character.createFadeInTween(character.node);
       }
 
       // prep sidebar fade-in
-      const sidebarChar: Konva.Text = character.createSidebarNode(sidebarX, sidebarY);
+      const sidebarChar: Konva.Text = character.getSidebarNodeAt(sidebarX, sidebarY);
       const pinyinX: number = sidebarX + (sidebarChar.width() / 2);
-      const sidebarPinyin: Konva.Text = character.createPinyinNode(pinyinX, pinyinY);
+      const sidebarPinyin: Konva.Text = character.getPinyinNodeAt(pinyinX, pinyinY);
       xjt.addSidebarNode(sidebarChar);
       xjt.addSidebarNode(sidebarPinyin);
-      const fadeInSidebar: Konva.Tween = Character.createFadeInTween(sidebarChar);
-      const fadeInPinyin: Konva.Tween = Character.createFadeInTween(sidebarPinyin);
 
       const delay: number = delayOffset + (delayPerChar * index);
 
       // set both
       setTimeout(
         () => {
-          if (!isRepeatChar) { fadeInGrid.play(); }
-          fadeInSidebar.play();
-          fadeInPinyin.play();
+          if (!isRepeatChar) { character.fadeIn(); }
+          character.fadeInSidebar();
+          character.fadeInPinyin();
 
           // if it's the last char of the last segment, play the next reading
           const isLastChar: boolean = index === (this.length - 1);
