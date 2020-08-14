@@ -39,7 +39,10 @@ class Xuanjitu {
   }
 
   static createLayers(): Konva.Layer[] {
-    return [new Konva.Layer(), new Konva.Layer()];
+    const layers: Konva.Layer[] = [new Konva.Layer(), new Konva.Layer()];
+    layers.forEach(layer => { layer.listening(false); });
+
+    return layers;
   }
 
   static createSidebarGroup(offsetX: number): Konva.Group {

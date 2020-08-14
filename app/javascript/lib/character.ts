@@ -20,7 +20,7 @@ class Character {
       { width: number, height: number, colorMappings: object, fontSize: number, fontFamily: string, strokeWidth: number } = constants.characters;
     const { offset }: { offset: any } = constants.text;
 
-    return new Konva.Text({
+    const newNode: Konva.Text = new Konva.Text({
       fontFamily,
       fontSize,
       strokeWidth,
@@ -30,6 +30,12 @@ class Character {
       text: character.text,
       fill: colorMappings[character.color],
     });
+
+    newNode.listening(false);
+    newNode.transformsEnabled('position');
+    newNode.perfectDrawEnabled(false);
+
+    return newNode;
   }
 
   constructor(characterData: CharacterData) {
@@ -83,6 +89,9 @@ class Character {
         opacity: 0,
       });
       this.pinyinNode.offsetX(this.pinyinNode.width() / 2);
+      this.pinyinNode.listening(false);
+      this.pinyinNode.transformsEnabled('position');
+      this.pinyinNode.perfectDrawEnabled(false);
     } else {
       this.pinyinNode.setAttrs({ x, y });
     }
@@ -105,6 +114,9 @@ class Character {
         fill: constants.characters.colorMappings[this.color],
         opacity: 0,
       });
+      this.sidebarNode.listening(false);
+      this.sidebarNode.transformsEnabled('position');
+      this.sidebarNode.perfectDrawEnabled(false);
     } else {
       this.sidebarNode.setAttrs({ x, y });
     }
