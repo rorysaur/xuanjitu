@@ -16,7 +16,7 @@ jobs:
       - ruby/install-deps
       - node/install-packages:
           pkg-manager: yarn
-  test:
+  backend-tests:
     parallelism: 3
     docker:
       - image: circleci/ruby:2.6.5-stretch-node
@@ -46,12 +46,27 @@ jobs:
       - run:
           name: Minitest
           command: bundle exec rails test
+  frontend-tests:
+    parallelism: 3
+    docker:
+      - image: circleci/ruby:2.6.5-stretch-node
+    steps:
+      - checkout
+      - ruby/install-deps
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          name: Jest
+          command: yarn test
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build
-      - test:
+      - backend-tests:
+          requires:
+            - build
+      - frontend-tests:
           requires:
             - build
