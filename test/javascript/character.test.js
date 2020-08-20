@@ -17,7 +17,9 @@ describe('constructor', () => {
   };
 
   beforeAll(() => {
-    Character.createNode = jest.fn();
+    Character.createNode = jest.fn(() => {
+      return { opacity: jest.fn() };
+    });
   });
 
   test('it returns an instance of Character with the expected attributes', () => {
