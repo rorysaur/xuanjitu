@@ -3,7 +3,7 @@ plugins:
     enabled: true
     channel: "eslint-7"
 exclude_patterns:
-  - "/*.config.js"
+  - "*.config.js"
   - "app/javascript/channels/**"
   - "app/javascript/lib/dead/**"
   - "app/javascript/packs/application.js"
