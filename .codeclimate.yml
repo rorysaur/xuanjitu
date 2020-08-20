@@ -2,3 +2,14 @@ plugins:
   eslint:
     enabled: true
     channel: "eslint-7"
+exclude_patterns:
+  - "/*.js"
+  - "app/javascript/channels/**"
+  - "app/javascript/lib/dead/**"
+  - "app/javascript/packs/application.js"
+  - "config/"
+  - "db/*"
+  - "!db/scripts/"
+  - "**/node_modules/"
+  - "**/vendor/"
+  - "**/*.d.ts"
