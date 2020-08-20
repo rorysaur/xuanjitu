@@ -11,7 +11,7 @@ $.when(
   }),
   $.ajax({
     url: '/readings.json',
-  })
+  }),
 ).then((charactersResponse, segmentsResponse, readingsResponse) => {
   data = {
     characters: charactersResponse[0]['characters'],
