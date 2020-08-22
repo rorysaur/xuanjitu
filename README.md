@@ -21,6 +21,7 @@ The technologies used are:
 + Rails testing: **MiniTest**
 + JS testing: **Jest**
 + Web hosting and deployment: **Heroku**
++ CI pipeline: **CircleCI**
 
 
 # What the app does
@@ -37,8 +38,8 @@ Pinyin is provided in the sidebar.
 A few of the features I plan to tackle next, in order of priority:
 
 + **Dictionary definitions:** Add the ability to mouse over characters and see some possible definitions.
-+ **Interactive mode:** An alternative to the demo mode, where instead of watching existing readings play, you can create your own, in accordance with existing rules of poem formation.
 + **A second Xuanji Tu variant:** The current implementation is heavily influenced by Métail's interpretation, which I chose because it was available to me in English and easy to follow. There is at least one other interpretation I'd like to implement, which is by Li Wei, a Chinese author. The variant would consist of a different color scheme, a slightly different version of the text, and a different system of rules for forming poems.
++ **Interactive mode:** An alternative to the demo mode, where instead of watching existing readings play, you can create your own, in accordance with existing rules of poem formation.
 
 
 # Codebase walkthrough and data model
