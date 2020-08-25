@@ -152,7 +152,6 @@ class Xuanjitu {
     this.state.demo.highlightedChars = [];
 
     // clean up sidebar
-    const oldNodes: any = this.sidebarGroup.getChildren();
     this.sidebarGroup.removeChildren();
 
     reading.play(this);

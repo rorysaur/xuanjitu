@@ -38,6 +38,15 @@ class Character {
     return newNode;
   }
 
+  static fadeInNode(node: Konva.Text): void {
+    const { duration, opacity }: { duration: number, opacity: number } = constants.demo.fadeIn;
+
+    node.to({
+      duration,
+      opacity,
+    });
+  }
+
   constructor(characterData: CharacterData) {
     const { text, color, pinyin, x_coordinate, y_coordinate } = characterData;
 
@@ -61,7 +70,7 @@ class Character {
   }
 
   public fadeIn(): void {
-    this.fadeInNode(this.node);
+    Character.fadeInNode(this.node);
   }
 
   public fadeOut(): void {
@@ -100,7 +109,7 @@ class Character {
   }
 
   public fadeInPinyin(): void {
-    this.fadeInNode(this.pinyinNode);
+    Character.fadeInNode(this.pinyinNode);
   }
 
   public getSidebarNodeAt(x: number, y: number): Konva.Text {
@@ -125,16 +134,7 @@ class Character {
   }
 
   public fadeInSidebar(): void {
-    this.fadeInNode(this.sidebarNode);
-  }
-
-  private fadeInNode(node: Konva.Text): void {
-    const { duration, opacity }: { duration: number, opacity: number } = constants.demo.fadeIn;
-
-    node.to({
-      duration,
-      opacity,
-    });
+    Character.fadeInNode(this.sidebarNode);
   }
 }
 

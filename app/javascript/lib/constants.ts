@@ -3,12 +3,8 @@ const constants = {
     width: 750,
     height: 750,
     color: '#eee',
-    strokeWidth: 5
+    strokeWidth: 5,
   },
-  // buttons: {
-  //   marginLeft: 20,
-  //   y: 30,
-  // },
   characters: {
     width: 25,
     height: 25,
@@ -39,33 +35,24 @@ const constants = {
       fill: 'red',
       opacity: 1,
       characterState: 'selected',
-    }
+    },
   },
   demo: {
     fadeIn: {
       delayPerChar: 300, // ms
       delayPerReading: 2000, // ms
       duration: 0.5, // sec
-      opacity: 1
+      opacity: 1,
     },
     fadeOut: {
       duration: 1,
-      opacity: 0.2
-    }
+      opacity: 0.2,
+    },
   },
   fadeIn: {
     delay: 1,
     maxDuration: 7,
   },
-  // focusText: {
-  //   marginLeft: 20,
-  //   fontSize: 200,
-  //   y: 500
-  // },
-  // instructionText: {
-  //   marginLeft: 20,
-  //   y: 100,
-  // },
   readingText: {
     charWidthMultiplier: 1.5,
     lineHeight: 45,
@@ -77,23 +64,18 @@ const constants = {
     pinyin: {
       fontFamily: 'Roboto Mono',
       fontSize: 14,
-    }
+    },
   },
   stage: {
     height: 750,
-    width: 1200
+    width: 1200,
   },
   text: {
     offset: {
       x: 10,
       y: 10,
-    }
+    },
   },
-  // trace: {
-  //   color: "#999",
-  //   strokeWidth: 2,
-  //   fadeDuration: 1,
-  // }
 };
 
 export default constants;
