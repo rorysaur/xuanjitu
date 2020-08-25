@@ -38,17 +38,15 @@ class Reading < ActiveRecord::Base
           non_red_reading = readings.find { |reading| !reading.red? }
           red_reading = readings.find(&:red?)
 
-          if !readings.empty?
+          unless readings.empty?
             results += [non_red_reading, red_reading].compact
             readings_found_for_reading_number = true
           end
         end
 
-        if readings_found_for_reading_number
-          reading_number += 1
-        else
-          break
-        end
+        break unless readings_found_for_reading_number
+
+        reading_number += 1
       end
 
       results

@@ -1,4 +1,5 @@
-file_path1, file_path2 = ARGV[0], ARGV[1]
+file_path1 = ARGV[0]
+file_path2 = ARGV[1]
 
 version1, version2 = [file_path1, file_path2].map { |file_path| File.read(file_path) }
 
@@ -9,7 +10,8 @@ characters2 = version2.split("\n").map { |row| row.split("") }
   row = []
 
   (0..28).each do |x|
-    a, b = characters1[y][x], characters2[y][x]
+    a = characters1[y][x]
+    b = characters2[y][x]
 
     char =
       if a == b

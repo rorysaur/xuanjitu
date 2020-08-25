@@ -1,7 +1,7 @@
 require "csv"
 
 # seed positions if table is empty
-if !Position.any?
+if Position.none?
   # prepare color values
   csv_path = File.join(Rails.root, "db", "data", "colors-metail.csv")
   CSV::Converters[:symbol] = -> (value) { value.to_sym }
@@ -35,14 +35,10 @@ else
 end
 
 # seed characters if table is empty
-if !Character.any?
+if Character.none?
   # read characters file
   file_path = File.join(Rails.root, "db", "data", "841.txt")
   text = File.read(file_path)
-
-  # # read rhymes file
-  # csv_path = File.join(Rails.root, "db", "data", "rhymes.csv")
-  # rhymes = CSV.parse(File.read(csv_path), headers: true)
 
   ActiveRecord::Base.transaction do
     lines = text.split("\n")
@@ -58,7 +54,6 @@ if !Character.any?
           text: char,
           form: Character.forms[:simplified],
           position: position,
-          # rhyme: rhymes[line_idx][char_idx].present?,
         )
       end
     end
@@ -68,7 +63,7 @@ else
 end
 
 # seed segments if table is empty
-if !Segment.any?
+if Segment.none?
   segments_csv_path = File.join(Rails.root, "db", "data", "generated_segments.csv")
   segment_rows = CSV.parse(File.read(segments_csv_path), headers: true, converters: :integer)
 
@@ -95,19 +90,19 @@ else
 end
 
 # seed character_segment_assignments if table is empty
-if !CharacterSegmentAssignment.any?
+if CharacterSegmentAssignment.none?
   segments = Segment.includes(:head_position, :tail_position).all
   characters = Character.includes(:position).all
 
   ActiveRecord::Base.transaction do
     characters.each do |char|
       segments.where(color: char.color).each do |segment|
-        if char.position.between?(segment.head_position, segment.tail_position)
-          CharacterSegmentAssignment.create!(
-            character: char,
-            segment: segment,
-          )
-        end
+        next unless char.position.between?(segment.head_position, segment.tail_position)
+
+        CharacterSegmentAssignment.create!(
+          character: char,
+          segment: segment,
+        )
       end
     end
   end
@@ -115,7 +110,7 @@ else
   puts "#{CharacterSegmentAssignment.count} character_segment_assignments already exist!"
 end
 
-if !ReadingSegmentAssignment.any?
+if ReadingSegmentAssignment.none?
   reading_segment_assignments_csv_path = File.join(Rails.root, "db", "data", "generated_reading_segment_assignments.csv")
   rows = CSV.parse(File.read(reading_segment_assignments_csv_path), headers: true, converters: :integer)
 

@@ -6,6 +6,8 @@ plugins:
       extensions:
         - .ts
         - .js
+  rubocop:
+    enabled: true
 exclude_patterns:
   - "*.config.js"
   - "app/javascript/channels/**"
