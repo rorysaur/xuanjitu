@@ -17,13 +17,13 @@ class ReadingGeneratorBlack < ReadingGenerator
   def get_head_coordinates(row_idx)
     case style
     when :long
-      get_head_coordinates_long(row_idx)
+      get_head_coordinates_long
     when :short
       get_head_coordinates_short(row_idx)
     end
   end
 
-  def get_head_coordinates_long(row_col_idx)
+  def get_head_coordinates_long
     possible_head_coordinates[direction_mode]
   end
 

@@ -71,7 +71,7 @@ class SegmentsGenerator
     # right to left
     tail_coordinates.each do |y|
       tail_coordinates[0...-1].each do |x|
-        next if (y == 14) && (x == 7 || x == 14)
+        next if (y == 14) && [7, 14].include?(x)
 
         segment = {
           head_x: x + num_steps,
@@ -87,7 +87,7 @@ class SegmentsGenerator
     # left to right
     tail_coordinates.each do |y|
       tail_coordinates[1..-1].each do |x|
-        next if (y == 14) && (x == 21 || x == 14)
+        next if (y == 14) && [14, 21].include?(x)
 
         segment = {
           head_x: x - num_steps,
@@ -103,7 +103,7 @@ class SegmentsGenerator
     # bottom to top
     tail_coordinates[0...-1].each do |y|
       tail_coordinates.each do |x|
-        next if (x == 14) && (y == 7 || y == 14)
+        next if (x == 14) && [7, 14].include?(y)
 
         segment = {
           head_x: x,
@@ -119,7 +119,7 @@ class SegmentsGenerator
     # top to bottom
     tail_coordinates[1..-1].each do |y|
       tail_coordinates.each do |x|
-        next if (x == 14) && (y == 21 || y == 14)
+        next if (x == 14) && [14, 21].include?(y)
 
         segment = {
           head_x: x,
@@ -417,7 +417,6 @@ class SegmentsGenerator
     bottom_left = { x: 12, y: 16 }
 
     length = 5
-    num_steps = length - 1
 
     segment1 = {
       head_x: top_left[:x],

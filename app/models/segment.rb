@@ -15,13 +15,13 @@ class Segment < ActiveRecord::Base
     yellow: "yellow",
   }
 
-  validates :head_position, uniqueness: {  scope: [:color, :length] }
+  validates :head_position, uniqueness: { scope: [:color, :length] }
 
   class << self
     def as_grid_by_tail
       segments = Segment.includes(:head_position, :tail_position).all
 
-      grid = Array.new(29){Array.new(29)}
+      grid = Array.new(29) { Array.new(29) }
 
       (0..28).each do |y|
         (0..28).each do |x|

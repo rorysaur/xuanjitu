@@ -377,7 +377,7 @@ class ReadingSegmentAssignmentsGenerator
     rows = []
 
     starting_points.each do |starting_points_attrs|
-      orientation = (starting_points_attrs[:block_number] % 4 == 0) ? :vertical : :horizontal
+      orientation = (starting_points_attrs[:block_number] % 4).zero? ? :vertical : :horizontal
 
       mapped_attr_sets =
         if orientation == :horizontal
@@ -585,7 +585,6 @@ class ReadingSegmentAssignmentsGenerator
 
         rows << csv_row
       end
-
     end
 
     rows
