@@ -8,6 +8,7 @@ plugins:
         - .js
   rubocop:
     enabled: true
+    channel: "rubocop-0-89"
 exclude_patterns:
   - "*.config.js"
   - "app/javascript/channels/**"
