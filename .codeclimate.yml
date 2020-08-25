@@ -2,6 +2,10 @@ plugins:
   eslint:
     enabled: true
     channel: "eslint-7"
+    config:
+      extensions:
+        - .ts
+        - .js
 exclude_patterns:
   - "*.config.js"
   - "app/javascript/channels/**"

@@ -3,15 +3,9 @@ import Xuanjitu from '../lib/xuanjitu';
 let data: any;
 
 $.when(
-  $.ajax({
-    url: '/characters.json',
-  }),
-  $.ajax({
-    url: '/segments.json',
-  }),
-  $.ajax({
-    url: '/readings.json',
-  }),
+  $.ajax({ url: '/characters.json' }),
+  $.ajax({ url: '/segments.json' }),
+  $.ajax({ url: '/readings.json' }),
 ).then((charactersResponse, segmentsResponse, readingsResponse) => {
   data = {
     characters: charactersResponse[0]['characters'],

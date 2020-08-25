@@ -64,7 +64,6 @@ class Segment {
 
     this.characters.forEach((character: Character, index: number) => {
       let isRepeatChar: boolean = false;
-      let fadeInGrid: Konva.Tween;
 
       // prep grid fade-in
       if (xjt.isHighlighted(character)) {
@@ -108,7 +107,7 @@ class Segment {
       const character = grid[y][x];
 
       if (character === undefined) {
-        throw `character not found at coordinates ${x}, ${y}!`
+        throw new Error(`character not found at coordinates ${x}, ${y}!`);
       } else {
         return character;
       }
@@ -130,7 +129,7 @@ class Segment {
       this.characters.push(getCharAtCoordinates(this.tail.x, this.tail.y));
     } else {
       // diagonal segment
-      throw 'diagonal segment not supported';
+      throw new Error('diagonal segment not supported');
     }
   }
 

@@ -1,4 +1,3 @@
-import Konva from 'konva';
 import Character from './character';
 import Reading from './reading';
 
@@ -44,4 +43,4 @@ export {
   ReadingData,
   SegmentData,
   State,
-}
+};
