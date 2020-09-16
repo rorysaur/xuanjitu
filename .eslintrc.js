@@ -8,6 +8,13 @@ module.exports = {
   extends: [
     'airbnb-base',
   ],
+  ignorePatterns: [
+    '*.config.js',
+    'app/javascript/channels/**',
+    'app/javascript/lib/dead/**',
+    'app/javascript/packs/application.js',
+    '**/*.d.ts',
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 11,
