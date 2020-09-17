@@ -28,9 +28,14 @@ The technologies used are:
 
 The app is still a work in progress (see **Roadmap** below for future features).
 
-So far, it only has a non-interactive demo mode, where it runs in a continuous loop, about an hour long. The loop consists of over 500 readings (distinct poems) proposed by Michèle Métail in her book _Wild Geese Returning: Chinese Reversible Poems_ (translated by Jody Gladding). For all colors other than red, the loop includes every reading listed in Métail's book (with minor exceptions); for red--which has such a disproportionately large number of possible readings that Métail doesn't list them in the book--the loop contains a sampling of readings that would be valid according to Métail's system.
+So far, it only has a non-interactive demo mode, where it runs in a continuous loop, about an hour long. The loop consists of over 500 readings (distinct poems) proposed by Michèle Métail in her book _Wild Geese Returning: Chinese Reversible Poems_ (translated by Jody Gladding). Pinyin is provided in the sidebar.
 
-Pinyin is provided in the sidebar.
+
+# Notes
+
++ For all colors other than red, the loop includes every reading listed in Métail's book (with minor exceptions); for red--which has such a disproportionately large number of possible readings that Métail doesn't list them in the book--the loop contains a sampling of readings that would be valid according to Métail's system.
++ On pinyin and Classical Chinese: The original poem was composed in Classical Chinese. Here it's rendered using Simplified Chinese characters. Classical Chinese had a different pronunciation system from modern Mandarin, so it doesn't strictly make sense to show the pinyin at all, but I include the modern-day pinyin associated with each character as an aid to understanding.
++ More on pinyin: For many characters, there are multiple possible pinyin forms. I have somewhat arbitrarily selected one form per character, but without checking all of them. If you want to make a case for changing any of the pinyin forms shown, do [contact me](https://rorysaur.blog/contact/).
 
 
 # Roadmap
@@ -105,7 +110,7 @@ To change any other source data, you would edit the file manually.
 
 # Contact me
 
-If you have any comments, suggestions/requests, corrections, or bug reports, open an issue in the repo, or email me at the address on my [profile](https://github.com/rorysaur).
+If you have any comments, suggestions/requests, corrections, or bug reports, you can open an issue in the repo, or get in touch using this [contact form](https://rorysaur.blog/contact/).
 
 
 # Further reading
