@@ -5,16 +5,15 @@
     "@rails/actioncable": "^6.0.0-alpha",
     "@rails/activestorage": "^6.0.0-alpha",
     "@rails/ujs": "^6.0.0-alpha",
-    "@rails/webpacker": "^4.0.7",
+    "@rails/webpacker": "^5.4.3",
     "@types/jquery": "^3.5.0",
     "jquery": "^3.5.0",
     "konva": "^4.0.15",
-    "ts-loader": "^7.0.5",
     "typescript": "^3.9.7"
   },
   "version": "0.1.0",
   "devDependencies": {
-    "@babel/preset-typescript": "^7.10.4",
+    "@babel/preset-typescript": "^7.18.6",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^3.6.1",
     "babel-jest": "^26.1.0",

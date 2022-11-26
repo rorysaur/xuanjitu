@@ -25,7 +25,6 @@ module.exports = function(api) {
           }
         }
       ],
-      isTestEnv && '@babel/preset-typescript',
       (isProductionEnv || isDevelopmentEnv) && [
         require('@babel/preset-env').default,
         {
@@ -35,8 +34,10 @@ module.exports = function(api) {
           modules: false,
           exclude: ['transform-typeof-symbol']
         }
-      ]
+      ],
+      ['@babel/preset-typescript', { 'allExtensions': true, 'isTSX': true }]
     ].filter(Boolean),
+
     plugins: [
       require('babel-plugin-macros'),
       require('@babel/plugin-syntax-dynamic-import').default,
